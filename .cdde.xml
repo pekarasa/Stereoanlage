@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<cdde delay="5000000">
+  <!--drive path="/dev/cdrom"-->
+  <drive path="/dev/sr0">
+    <audio command="touch ~/.cdrom/cdd ; sleep 2s ; rm ~/.cdrom/cdd"/>
+    <data command="echo A data cd was inserted."/>
+    <dvd command="echo A dvd was inserted."/>
+    <vcd command="echo A vcd was inserted."/>
+    <svcd command="echo A svcd was inserted."/>
+    <blank command="echo A blank cdr/dvdr was inserted."/>
+    <mixed command="echo A mixed (audio/data) cd was inserted."/>
+  </drive>
+</cdde>
