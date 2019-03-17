@@ -7,22 +7,17 @@ echo "play $1" >> /home/pi/audio.log
 play () {
 	mpc clear
 	mpc load "$1"
-	mpc volume 30
+	mpc volume 10
 	mpc play
 }
 
-eject () {
-	mpc clear
-	sudo eject /dev/sr0
+playCD () {
+	kill $(ps aux | grep 'mplayer' | awk '{print $2}')
+	mplayer -cdrom-device /dev/sr0 cdda:// -volume 20
 }
 
-playCD () {
-	mpc clear
-	sudo /home/pi/control/addAudioCD.sh
-	mpc playlist >> /home/pi/audio.log
-	# eject -x 3
-	mpc volume 30
-	mpc play 1
+stopCD () {
+	kill $(ps aux | grep 'mplayer' | awk '{print $2}')
 }
 
 case "$1" in
@@ -37,8 +32,8 @@ case "$1" in
 7) play "Radio Dlf Kultur" ;;
 8) play "Radio Ö1" ;;
 
-green) playCD ;;
-eject) eject ;;
+cd) playCD ;;
+cdStop) stopCD ;;
 
 *) echo "unknown command $1" >> /home/pi/audio.log ;;
 esac
