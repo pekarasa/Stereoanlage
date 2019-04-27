@@ -1,0 +1,4 @@
+exclude-from-rsync
+*.pdf
+*.odt
+.git
