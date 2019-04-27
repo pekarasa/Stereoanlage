@@ -1,33 +1,42 @@
 # Stereoanlage
 
-Setting up a Rapsberry PI and AMP2 as stereo system.
+Assembling a Raspberry Pi, an AMP2 as amplifier, an infrared control and an infrared receiver diode to create a simple stereo system.
 
-1. [Raspbian Stretch Lite](https://downloads.raspberrypi.org/raspbian_lite_latest) Image herunterladen
-1. Image erstellen mit Linuxtool (USB-Abbilderstellung)
-1. SSH einschalten, damit nach dem booten ssh funktioniert: `touch '/media/pp/boot/ssh'`
-1. Booten und via `ssh pi@192.168.1.118` verbinden. Das Standard-Passwort lautet `raspberry`.
-1. Ändere folgende Einstellungen mit `sudo raspi-config`
+rsync -avz -e "ssh" --exclude-from=/home/pp/Dokumente/Coding/Stereoanlage/exclude-from-rsync  /home/pp/Dokumente/Coding/Stereoanlage/ pi@Musix:/home/pi/
+
+## Setup Raspberry Pi
+
+1. Download [Raspbian Stretch Lite](https://downloads.raspberrypi.org/raspbian_lite_latest)
+1. Bring the image to the sd card. (USB image creator) [raspberrypi.org](https://www.raspberrypi.org/documentation/installation/installing-images/README.md)
+1. Enable SSH to make ssh work after booting: `touch '/media/pp/boot/ssh'`
+1. Boot and connect with `ssh pi@raspberrypi`. The default passowrd is `raspberry`.
+1. Change following settings with `sudo raspi-config`
     - Password: [new password]
     - Localization Options
       - Change Local: de_CH.UTF-8 UTF-8
     - Network Options
       - Hostname: `Musix`
-      - WiFi: [your wifi name]
     - Advanced Options
       - Expand Filesystem
     - Update
-1. Editiere `/etc/apt/sources.list` und maskiere bestehende Einträge aus.
-1. Füge folgenden Eintrag hinzu: `deb http://packages.hs-regensburg.de/raspbian/ stretch main contrib non-free rpi`
-1. Aktualisiere das System mit `sudo apt-get update`, `sudo apt-get upgrade`, `sudo apt autoremove` und `sudo rpi-update`
+1. // Edit `/etc/apt/sources.list` and mask all existing entries.
+1. // Add the entry: `deb http://packages.hs-regensburg.de/raspbian/ stretch main contrib non-free rpi`
+1. Update the system with `sudo apt-get update`, `sudo apt-get upgrade`, `sudo apt autoremove` and `sudo rpi-update`
 1. `sudo shutdown -h now` bzw `sudo reboot`
 
-## LIRC auf dem Raspberry Pi einrichten
+## VLR-RC001
 
-1. LIRC installieren: `sudo apt-get install lirc --yes`
-1. Füge folgende Zeilen zur `/etc/modules`-Datei hinzu
+Press "SET" and the device button at the same time, for example “TV1”, the LED will light up.
+Type in the according code number 0026, after the last digit the LED will turn off.
+
+## Setting up LIRC on the Raspberry Pi
+
+1. Connect to the raspberry with `ssh pi@Musix`
+1. Install LIRC: `sudo apt-get install lirc --yes`
+1. Add following lines to `/etc/modules`
     - lirc_dev
     - lirc_rpi gpio_in_pin=22
-1. Device in der Hardware Konfiguration eintragen `sudo nano /etc/lirc/hardware.conf`
+1. Add device in the hardware configuration `sudo nano /etc/lirc/hardware.conf`
 
     ```bash
     # Arguments which will be used when launching lircd
@@ -38,45 +47,52 @@ Setting up a Rapsberry PI and AMP2 as stereo system.
     MODULES="lirc_rpi"
     ```
 
-1. LIRC_PI-Modul laden: `sudo nano /boot/config.txt` und am Ende folgende Zeilen hizufügen:
+1. To load LIRC_PI-Modul edit: `sudo nano /boot/config.txt` and add at the bottom this lines:
 
     ```bash
     # Uncomment this to enable the lirc-rpi module
     dtoverlay=lirc-rpi,gpio_in_pin=22
     ```
 
+1. To disable wifi edit: `sudo nano /boot/config.txt` and add at teh bottom this lines:
+
+    ```bash
+    # Disable wlan to avoid bluetooth interference
+    dtoverlay=pi3-disable-wifi
+    ```
+
 1. `sudo reboot`
-1. Device anzeigen lassen mittels `ls -l /dev/lir*`
-1. Aktualisiere folgende Werte: `sudo nano /etc/lirc/lirc_options.conf`:
+1. Show the new device with `ls -l /dev/lir*`
+1. Update: `sudo nano /etc/lirc/lirc_options.conf`:
 
     ```bash
     driver    = default
     device = /dev/lirc0
     ```
 
-1. `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/VLR-RC001_0026.lircd.conf  pi@192.168.1.118:/home/pi/`
+1. `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/VLR-RC001_0026.lircd.conf  pi@Musix:/home/pi/`
 1. `sudo cp ~/VLR-RC001_0026.lircd.conf /etc/lirc/lircd.conf`
-1. `sudo /etc/init.d/lircd stop`
-1. `sudo /etc/init.d/lircd start`
-1. `sudo /etc/init.d/lircd status`
+1. `sudo service lircd stop`
+1. `sudo service lircd start`
+1. `sudo service lircd status`
 1. `sudo reboot`
 
-### Testen
+### Test lirc
 
-1. `sudo /etc/init.d/lircd stop`
+1. `sudo service lircd stop`
 1. `mode2 -d /dev/lirc0`
-1. Auf der IR Bedienung irgenwelche Tasten drücken. Es erscheinen dieverse Zeilen auf dem Bildschirm.
+1. Press any keys on the IR control. Various lines appear on the screen.
 
-1. `sudo /etc/init.d/lircd stop`
+1. `sudo service lircd start`
 1. `irw`
-1. Auf der IR Bedienung irgenwelche Tasten drücken. Es erscheinen die Kommandos auf dem Bildschirm.
+1. Press any keys on the IR control. The commands appear on the screen.
 
 #### Codes der Fernbedienung selbst aufnehmen mit
 
-1. `sudo /etc/init.d/lircd stop`
+1. `sudo service lircd stop`
 1. `irrecord -d /dev/lirc0 ~/lircd.conf`
 
-Weitere Infos unter [Raspberry Pi IR Remote Control einrichten](https://tutorials-raspberrypi.de/raspberry-pi-ir-remote-control/) oder [Getting lirc to work with Raspberry Pi 3 (Raspbian Stretch)](https://gist.github.com/prasanthj/c15a5298eb682bde34961c322c95378b)
+More information in [Raspberry Pi IR Remote Control einrichten](https://tutorials-raspberrypi.de/raspberry-pi-ir-remote-control/) or [Getting lirc to work with Raspberry Pi 3 (Raspbian Stretch)](https://gist.github.com/prasanthj/c15a5298eb682bde34961c322c95378b)
 
 ## HiFiBerry AMP2
 
@@ -106,10 +122,14 @@ Weitere Infos unter [Raspberry Pi IR Remote Control einrichten](https://tutorial
 
 ## mpd installieren
 
-1. Installiere den musc player deamon, sowie den client und die alsa utilities: `sudo apt-get install mpd mpc alsa-utils`
-1. Passe folgende Werte an: `sudo nano /etc/mpd.conf`
+1. Install the music player daemon, as well as the client and the alsa utilities: `sudo apt-get install mpd mpc alsa-utils`
+1. Adjust the following values: `sudo nano /etc/mpd.conf`
 
     ```bash
+    music_directory         "/home/pi/mpd/music"
+    ...
+    playlist_directory      "/home/pi/mpd/playlists"
+    ...
     #bind_to_address        "localhost"
     ...
     # hifiberry AMP2 ALSA output:
@@ -122,20 +142,21 @@ Weitere Infos unter [Raspberry Pi IR Remote Control einrichten](https://tutorial
     }
     ```
 
-1. Setzen der Rechte mit:
+1. Set the permissions with:
 
     ```bash
-    sudo chmod g+w /var/lib/mpd/music/ /var/lib/mpd/playlists/
-    sudo chgrp audio /var/lib/mpd/music/ /var/lib/mpd/playlists/
+    mkdir /home/pi/mpd /home/pi/mpd/music/ /home/pi/mpd/playlists/
+    sudo chmod g+w /home/pi/mpd/music/ /home/pi/mpd/playlists/
+    sudo chgrp audio /home/pi/mpd/music/ /home/pi/mpd/playlists/
     ```
 
-1. Playlists in `/var/lib/mpd/playlists` hinzufügen: `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/playlists/* pi@192.168.1.118:/var/lib/mpd/playlists/`
-1. IR Tastebelegung setzen: `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/control/ pi@192.168.1.118:/home/pi/control`
-1. irexec als Service installieren: `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/irexec.init.d pi@192.168.1.118:/home/pi/`
-1. umbenennen und in den richtigen Ordner verschieben: `sudo cp /home/pi/irexec.init.d /etc/init.d/irexec`
+1. Copy playlists: `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/mpd/playlists/* pi@Musix:/home/pi/mpd/playlists/`
+1. Copy IR Key configuration: `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/control/ pi@Musix:/home/pi/control`
+1. Install irexec as service: `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/irexec.init.d pi@Musix:/home/pi/`
+1. rename and move it to the correct directory: `sudo cp /home/pi/irexec.init.d /etc/init.d/irexec`
 1. `sudo chmod 755 /etc/init.d/irexec`
-1. Service starten mit `sudo /etc/init.d/irexec start`
-1. Dafür sorgen dass der Service nach dem Booten automatisch gestartet wird: Ergänze `sudo nano /etc/rc.local` mit `/etc/init.d/irexec start`
+1. Start service: `sudo /etc/init.d/irexec start`
+1. Register script to be run at startup. Edit `sudo nano /etc/rc.local` and add line `/etc/init.d/irexec start`
 
 ## PI Bluetooth Audio Receiver
 
@@ -166,7 +187,7 @@ We will use pulseaudio as the pi’s sound server, to which the audio media will
 
     The method trivial is the most basic algorithm implemented. It is supported by the pi.
 
-1. `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/pulseaudio.init.d  pi@192.168.1.118:/home/pi/`
+1. `rsync -avz -e "ssh" /home/pp/Dokumente/Coding/Stereoanlage/pulseaudio.init.d  pi@Musix:/home/pi/`
 1. `sudo cp ~/pulseaudio.init.d /etc/init.d/pulseaudio.sh`
 1. `sudo chmod 755 /etc/init.d/pulseaudio.sh`
 1. Register script to be run at startup: `sudo update-rc.d pulseaudio.sh defaults`
