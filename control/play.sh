@@ -7,7 +7,7 @@ echo "play $1" >> /home/pi/audio.log
 play () {
 	mpc clear
 	mpc load "$1"
-	mpc volume 10
+	mpc volume 30
 	mpc play
 }
 
@@ -18,6 +18,10 @@ playCD () {
 
 stopCD () {
 	kill $(ps aux | grep 'mplayer' | awk '{print $2}')
+}
+
+recordCD () {
+	sudo ripit --nointeraction -W --coder=2 -e --overwrite e -o /home/pi/mpd/music/
 }
 
 case "$1" in
@@ -31,9 +35,11 @@ case "$1" in
 
 7) play "Radio Dlf Kultur" ;;
 8) play "Radio Ö1" ;;
+9) play "Chillout" ;;
 
 cd) playCD ;;
 cdStop) stopCD ;;
+cdRecord) recordCD ;;
 
 *) echo "unknown command $1" >> /home/pi/audio.log ;;
 esac
