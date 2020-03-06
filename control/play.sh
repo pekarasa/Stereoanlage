@@ -7,21 +7,33 @@ echo "play $1" >> /home/pi/audio.log
 play () {
 	mpc clear
 	mpc load "$1"
-	mpc volume 30
 	mpc play
 }
 
 playCD () {
-	kill $(ps aux | grep 'mplayer' | awk '{print $2}')
-	mplayer -cdrom-device /dev/sr0 cdda:// -volume 20
+	echo "shutdown" | netcat localhost 12345 -q 1
+	kill $(sudo ps aux | grep 'vlc' | awk '{print $2}')
+	cvlc -I rc --rc-host localhost:12345 cdda:// --volume-step 6
 }
 
 stopCD () {
-	kill $(ps aux | grep 'mplayer' | awk '{print $2}')
+	echo "shutdown" | netcat localhost 12345 -q 1
+	kill $(sudo ps aux | grep 'vlc' | awk '{print $2}')
+}
+
+ejectCD () {
+	echo "shutdown" | netcat localhost 12345 -q 1
+	kill $(sudo ps aux | grep 'vlc' | awk '{print $2}')
+
 }
 
 recordCD () {
 	sudo ripit --nointeraction -W --coder=2 -e --overwrite e -o /home/pi/mpd/music/
+}
+
+powerOff() {
+	mpc volume 30
+	sudo shutdown -h now
 }
 
 case "$1" in
@@ -35,11 +47,22 @@ case "$1" in
 
 7) play "Radio Dlf Kultur" ;;
 8) play "Radio Ö1" ;;
-9) play "Chillout" ;;
+9) play "Radio Bayern 2" ;;
+
+10) play "Chillout" ;;
+11) play "80s Forever" ;;
+12) play "Ambi Nature Radio" ;;
+13) play "Energy 80s" ;;
+14) play "Energy 90s" ;;
+15) play "Energy Mundart" ;;
+16) play "Energy One Hit Wonder" ;;
+17) play "Radio 24 - Greatest Hits" ;;
 
 cd) playCD ;;
 cdStop) stopCD ;;
 cdRecord) recordCD ;;
+
+PowerOff) powerOff ;;
 
 *) echo "unknown command $1" >> /home/pi/audio.log ;;
 esac
