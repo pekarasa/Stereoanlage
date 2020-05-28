@@ -34,6 +34,7 @@ In this project I have collected the knowledge from different sources. Namely th
 - [11] [VLC Command line](https://wiki.videolan.org/Documentation:Command_line/#Modules_selection)
 - [12] [VLC HowTo/Use with lirc](https://wiki.videolan.org/VLC_HowTo/Use_with_lirc/)
 - [13] [Bluetooth - Troubleshooting](https://wiki.archlinux.org/index.php/Bluetooth#Troubleshooting)
+- [14] [HiFiBerry Amp2](https://www.hifiberry.com/shop/boards/hifiberry-amp2/)
 
 ## Setup of the infrared remote control VLR-RC001
 
@@ -45,6 +46,8 @@ Type in the according code number 0026, after the last digit the LED will turn o
 I connect an infrared diode which serves as a receiver. This is connected as described under [[1]](https://tutorials-raspberrypi.de/raspberry-pi-ir-remote-control/). But I will use the gpio_in_pin 22 and not the described gpio_in_pin 17.
 
 The button is connected as described under [[2]](https://howchoo.com/g/mwnlytk3zmm/how-to-add-a-power-button-to-your-raspberry-pi).
+
+As audio card and amplifier I use the hifiberry AMP2. See [[14]].
 
 ## Development computer
 
