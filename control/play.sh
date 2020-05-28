@@ -51,12 +51,12 @@ case "$1" in
 
 10) play "Chillout" ;;
 11) play "80s Forever" ;;
-12) play "Ambi Nature Radio" ;;
-13) play "Energy 80s" ;;
-14) play "Energy 90s" ;;
-15) play "Energy Mundart" ;;
-16) play "Energy One Hit Wonder" ;;
-17) play "Radio 24 - Greatest Hits" ;;
+12) play "Energy 80s" ;;
+13) play "Energy 90s" ;;
+14) play "Energy Mundart" ;;
+15) play "Energy One Hit Wonder" ;;
+16) play "Radio 24 - Greatest Hits" ;;
+17) play "Ambi Nature Radio" ;;
 
 cd) playCD ;;
 cdStop) stopCD ;;
