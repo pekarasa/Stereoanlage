@@ -35,6 +35,7 @@ In this project I have collected the knowledge from different sources. Namely th
 - [12] [VLC HowTo/Use with lirc](https://wiki.videolan.org/VLC_HowTo/Use_with_lirc/)
 - [13] [Bluetooth - Troubleshooting](https://wiki.archlinux.org/index.php/Bluetooth#Troubleshooting)
 - [14] [HiFiBerry Amp2](https://www.hifiberry.com/shop/boards/hifiberry-amp2/)
+- [15] [Easy Setup IR Remote Control Using LIRC for the Raspberry PI (RPi) - July 2019](https://www.instructables.com/id/Setup-IR-Remote-Control-Using-LIRC-for-the-Raspber/)
 
 ## Setup of the infrared remote control VLR-RC001
 
@@ -43,11 +44,11 @@ Type in the according code number 0026, after the last digit the LED will turn o
 
 ## Hardware Extensions
 
-I connect an infrared diode which serves as a receiver. This is connected as described under [[1]](https://tutorials-raspberrypi.de/raspberry-pi-ir-remote-control/). But I will use the gpio_in_pin 22 and not the described gpio_in_pin 17.
+I connect an infrared diode which serves as a receiver. This is connected as described under [[14]](https://www.instructables.com/id/Setup-IR-Remote-Control-Using-LIRC-for-the-Raspber/). But I will use the gpio_in_pin 22 and not the described gpio_in_pin 17.
 
 The button is connected as described under [[2]](https://howchoo.com/g/mwnlytk3zmm/how-to-add-a-power-button-to-your-raspberry-pi).
 
-As audio card and amplifier I use the hifiberry AMP2. See [[14]].
+As audio card and amplifier I use the hifiberry AMP2. See [[14]](https://www.hifiberry.com/shop/boards/hifiberry-amp2/).
 
 ## Development computer
 
@@ -61,7 +62,7 @@ The public key is then placed on the Rapsbbery Pi. See below for details.
 
 1. Download [Raspbian Stretch Lite](https://downloads.raspberrypi.org/raspbian_lite_latest)
 1. Bring the image to the sd card. (USB image creator) [[3]](https://www.raspberrypi.org/documentation/installation/installing-images/README.md)
-1. Enable SSH to make ssh work after booting: `touch '/media/pp/boot/ssh'`
+1. Enable SSH to make ssh work after booting: `touch '/run/media/pp/rootfs/boot/ssh'`
 1. Boot and connect with `ssh pi@raspberrypi`. The default passowrd is `raspberry`.
 1. Change following settings with `sudo raspi-config`
     - Password: [new password]
@@ -74,60 +75,82 @@ The public key is then placed on the Rapsbbery Pi. See below for details.
 1. __Don't__ Update the system with `sudo apt-get update && sudo apt-get upgrade && sudo apt autoremove`
 1. `sudo shutdown -h now` bzw `sudo reboot`
 
-## Setting up LIRC on the Raspberry Pi
+## Place public key on Raspberry Pi
 
 ```bash
 ssh pi@Musix mkdir -p .ssh
 cat .ssh/id_rsa.pub | ssh pi@Musix 'cat >> .ssh/authorized_keys'
+```
+
+## Setting up LIRC on the Raspberry Pi
+
+```bash
 ssh pi@Musix
-sudo apt-get install lirc mpd mpc alsa-utils bluetooth bluez pulseaudio pulseaudio-module-bluetooth --yes
+sudo apt-get install lirc
+```
+
+----DON'T WORRY! as this will likely raise an error "Failed to start Flexible IR remote input/output application support" as the .dist suffix needs to be deleted from lirc_options.conf. Just rename the file as shown.
+
+```bash
+sudo mv /etc/lirc/lirc_options.conf.dist /etc/lirc/lirc_options.conf
+```
+Reinstall lirc now that the lirc_options.conf file has been renamed: `sudo apt-get install lirc`
+
+Edit `/etc/lirc/lirc_options.conf` as follows by changing these two lines:
+
+:
+
+
+driver = **default**
+
+device = **/dev/lirc0**
+
+:
+
+Remove suffix .dist from /etc/lirc/lircd.conf.dist
+
+```bash
+sudo mv /etc/lirc/lircd.conf.dist /etc/lirc/lircd.conf
+```
+
+Edit `/boot/config.txt` by adding one line in the lirc-rpi module section as follows.
+
+```bash
+:
+# Uncomment this to enable infrared communication.
+dtoverlay=gpio-ir,gpio_pin=22
+#dtoverlay=gpio-ir-tx, gpio_pin=18
+:
+```
+
+Stop, start and check status of lircd to ensure there are no errors!
+
+```bash
+sudo systemctl stop lircd.service
+sudo systemctl start lircd.service
+sudo systemctl status lircd.service
+sudo reboot
+```
+## Installing other software
+
+```bash
+sudo apt-get install mpd mpc alsa-utils bluetooth bluez pulseaudio pulseaudio-module-bluetooth --yes
 ```
 
 Edit `sudo nano /boot/config.txt` and comment / add the following lines at the end of the file:
 
 ```bash
+:
 # Enable audio (loads snd_bcm2835)
 #dtparam=audio=on
 
 # AMP2
 dtoverlay=hifiberry-dacplus
 
-# Uncomment this to enable the lirc-rpi module
-dtoverlay=lirc-rpi,gpio_in_pin=22
-
 # Disable wlan to avoid bluetooth interference
 dtoverlay=pi3-disable-wifi
+:
 ```
-
-```bash
-sudo reboot
-ssh pi@Musix
-sudo modprobe lirc_dev
-sudo modprobe lirc_rpi gpio_in_pin=22
-```
-
-//Add following lines to `/etc/modules`
-
-    - lirc_dev
-    - lirc_rpi gpio_in_pin=22
-
-Add device in the hardware configuration `sudo nano /etc/lirc/hardware.conf`
-
-   ```bash
-   # Arguments which will be used when launching lircd
-   LIRCD_ARGS="--uinput --listen"
-   LOAD_MODULES=true
-   DRIVER="default"
-   DEVICE="/dev/lirc0"
-   MODULES="lirc_rpi"
-   ```
-
-Update: `sudo nano /etc/lirc/lirc_options.conf`:
-
-   ```bash
-   driver    = default
-   device = /dev/lirc0
-   ```
 
 ```bash
 sudo reboot
@@ -137,6 +160,12 @@ exit
 ```
 
 ### Synchronize and deploy the software
+
+Your remote configuration file(s) will be placed in the /etc/lirc/lircd.conf.d directory. LIRC will find any file in this directory as long as it has a .conf extension (ie: JVC.lircd.conf). We will not be using the devinput.lircd.conf file so we will hide it by changing the extension as follows by renaming devinput.lircd.conf to devinput.lircd.conf.notUsed
+
+```bash
+sudo mv /etc/lirc/lircd.conf.d/devinput.lircd.conf /etc/lirc/lircd.conf.d/devinput.lircd.conf.notUse
+```
 
 ```bash
 rsync -avz -e "ssh" --exclude-from=/home/pp/Dokumente/Coding/Stereoanlage/exclude-from-rsync  /home/pp/Dokumente/Coding/Stereoanlage/ pi@Musix:/home/pi/
@@ -152,11 +181,11 @@ Adjust the following values: `sudo nano /etc/mpd.conf`
 
   ```bash
   music_directory         "/home/pi/mpd/music"
-  ...
+  :
   playlist_directory      "/home/pi/mpd/playlists"
-  ...
+  :
   #bind_to_address        "localhost"
-  ...
+  :
   # hifiberry AMP2 ALSA output:
   #
   audio_output {
