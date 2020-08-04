@@ -11,9 +11,12 @@ play () {
 }
 
 playCD () {
+	# stop already running players
 	echo "shutdown" | netcat localhost 12345 -q 1
 	kill $(sudo ps aux | grep 'vlc' | awk '{print $2}')
-	cvlc -I rc --rc-host localhost:12345 cdda:// --volume-step 6
+	# Is it an audio cd
+	cvlc -I rc --rc-host localhost:12345 --play-and-exit --volume-step 6 cdda:// 
+	echo "volume 30" | netcat localhost 12345 -q 1
 }
 
 stopCD () {
