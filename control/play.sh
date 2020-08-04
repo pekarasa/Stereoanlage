@@ -10,7 +10,7 @@ play () {
 	mpc play
 }
 
-playCD () {
+startCD () {
 	# stop already running players
 	echo "shutdown" | netcat localhost 12345 -q 1
 	kill $(sudo ps aux | grep 'vlc' | awk '{print $2}')
@@ -61,7 +61,7 @@ case "$1" in
 16) play "Radio 24 - Greatest Hits" ;;
 17) play "Ambi Nature Radio" ;;
 
-cd) playCD ;;
+cdStart) startCD ;;
 cdStop) stopCD ;;
 cdRecord) recordCD ;;
 
