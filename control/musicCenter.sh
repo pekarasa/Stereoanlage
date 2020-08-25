@@ -394,7 +394,7 @@ record () {
         Tuner)
             ;;
         AudioCD)
-            echi ripit >> $musicCenterLog
+            echo "ripit AudioCD" >> $musicCenterLog
             sudo ripit --nointeraction -W --coder=2 -e --overwrite e -o /home/pi/mpd/music/
             ;;
         DVD)
