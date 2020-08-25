@@ -205,10 +205,10 @@ ssh pi@MusixOne
 
 1. Register script to be run at startup. Edit `sudo nano /etc/rc.local` and add line `/etc/init.d/irexec start` before `exit 0`
 
-## Installing Music Player Daemon and VideoLAN
+## Installing Music Player Daemon, setcd and VideoLAN
 
 ```bash
-sudo apt-get install mpd mpc vlc
+sudo apt-get install mpd mpc vlc setcd
 ```
 
 ### Setup mpd
