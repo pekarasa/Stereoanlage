@@ -1,12 +1,12 @@
-# Stereo system
+# Stereoanlage
 
-I run a compact stereo system consisting of a Raspberry Pi and an AMP2 as audio amplifier. Additionally there is a button to start the system. The stereo system is operated with an infrared remote control.
+I run a compact music center consisting of a Raspberry Pi and an AMP2 as audio amplifier. Additionally there is a button to start the system. The music center is operated with an infrared remote control.
 
-The aim of this guide is to help you set up the software for your stereo system as quickly as possible.
+The aim of this guide is to help you set up the software for your music center as quickly as possible.
 
 ## Playable media
 
-Currently the stereo system can play the following media:
+Currently the music center can play the following media:
 
 - Streams from the Internet (web radio)
 - Local music (mp3)
