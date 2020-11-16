@@ -96,19 +96,5 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.Verify(m => m.Mount());
             resul.Should().Be(MediumType.Mp3);
         }
-
-        [Test]
-        [Ignore("Endlosschleife")]
-        public void GetType_WhenDriveIsNotReady_ThenReturnNone()
-        {
-            // arrange
-            _opticalDiscService.Setup(m => m.GetInfo()).Returns("drive is not ready");
-
-            // act
-            MediumType resul = _sut.GetInsertedDiscType();
-
-            // assert
-            resul.Should().Be(MediumType.None);
-        }
     }
 }

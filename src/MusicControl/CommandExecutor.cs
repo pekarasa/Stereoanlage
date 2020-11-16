@@ -22,8 +22,6 @@ namespace PeKaRaSa.MusicControl
         /// <param name="arguments"></param>
         public void Command(IEnumerable<string> arguments)
         {
-            IAudioUnit oldUnit = _activeUnit;
-
             if (!arguments?.Any() ?? true)
             {
                 Console.WriteLine("No command can be executed without arguments.");
@@ -36,14 +34,7 @@ namespace PeKaRaSa.MusicControl
             if ("changeUnit".Equals(command, StringComparison.CurrentCultureIgnoreCase))
             {
                 string unitToActivate = arguments.Last();
-                _activeUnit = _factory.GetActiveUnit(unitToActivate);
-
-                // kill deactivated unit
-                if (oldUnit != _activeUnit)
-                {
-                    oldUnit?.Kill();
-                }
-
+                _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit);
                 return;
             }
 

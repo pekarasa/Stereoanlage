@@ -29,7 +29,7 @@ namespace PeKaRaSa.MusicControl.Test
 
             // assert
             _factoryMock.Verify(m => m.GetDefaultUnit(), Times.Once);
-            _factoryMock.Verify(m => m.GetActiveUnit(It.IsAny<string>()), Times.Never);
+            _factoryMock.Verify(m => m.GetActiveUnit(It.IsAny<string>(), null), Times.Never);
         }
 
         [Test]
@@ -40,36 +40,22 @@ namespace PeKaRaSa.MusicControl.Test
 
             // assert
             _factoryMock.Verify(m => m.GetDefaultUnit(), Times.Once);
-            _factoryMock.Verify(m => m.GetActiveUnit(It.IsAny<string>()), Times.Never);
+            _factoryMock.Verify(m => m.GetActiveUnit(It.IsAny<string>(), null), Times.Never);
         }
 
         [Test]
         public void Command_WhenChangeUnitFromRadioToRadio_ThenActiveUnitStaysRadio()
         {
             _factoryMock.Setup(m => m.GetDefaultUnit()).Returns(_audioUnitMock.Object);
-            _factoryMock.Setup(m => m.GetActiveUnit("radio")).Returns(_audioUnitMock.Object);
+            _factoryMock.Setup(m => m.GetActiveUnit("radio", _audioUnitMock.Object)).Returns(_audioUnitMock.Object);
 
             // act
             _sut.Command("changeunit radio".Split(' '));
 
             // assert
             _factoryMock.Verify(m => m.GetDefaultUnit(), Times.Once);
-            _factoryMock.Verify(m => m.GetActiveUnit("radio"), Times.Once);
+            _factoryMock.Verify(m => m.GetActiveUnit("radio", _audioUnitMock.Object), Times.Once);
             _audioUnitMock.Verify(m => m.Kill(), Times.Never);
-        }
-
-        [Test]
-        public void Command_WhenUnitRealyChanges_ThenKillIsCalled()
-        {
-            _factoryMock.Setup(m => m.GetDefaultUnit()).Returns(_audioUnitMock.Object);
-            _factoryMock.Setup(m => m.GetActiveUnit(It.IsAny<string>())).Returns<IAudioUnit>(null);
-
-
-            // act
-            _sut.Command("changeunit radio".Split(' '));
-
-            // assert
-            _audioUnitMock.Verify(m => m.Kill(), Times.Once);
         }
 
         [Test]

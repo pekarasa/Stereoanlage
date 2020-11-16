@@ -7,7 +7,7 @@ namespace PeKaRaSa.MusicControl
     /// </summary>
     public interface IAudioUnitFactory
     {
-        public IAudioUnit GetActiveUnit(string unitToActivate);
+        public IAudioUnit GetActiveUnit(string unitToActivate, IAudioUnit currentUnit);
 
         public IAudioUnit GetDefaultUnit();
     }

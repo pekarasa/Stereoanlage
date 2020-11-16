@@ -31,12 +31,12 @@ namespace PeKaRaSa.MusicControl.Services
 
                 if (info.Contains("not ready"))
                 {
-                    Thread.Sleep(_millisecondsToSleepWhenDriveIsNotReady);
+                    Thread.SpinWait(_millisecondsToSleepWhenDriveIsNotReady);
                 }
 
                 if (info.Contains("is open"))
                 {
-                    Thread.Sleep(_millisecondsToSleepWhenDriveIsOpen);
+                    Thread.SpinWait(_millisecondsToSleepWhenDriveIsOpen);
                 }
 
                 if (info.Contains("mixed type CD (data/audio)") || info.Contains("audio disc"))

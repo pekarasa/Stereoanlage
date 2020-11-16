@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using PeKaRaSa.MusicControl.Services;
 using PeKaRaSa.MusicControl.Units;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
@@ -27,7 +28,7 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenCalledForRadio_ThenRadioUnitIsReturned()
         {
             // act
-            IAudioUnit result = _sut.GetActiveUnit("radio");
+            IAudioUnit result = _sut.GetActiveUnit("radio", null);
 
             // assert
             result.GetType().Name.Should().Be("RadioUnit");
@@ -40,7 +41,7 @@ namespace PeKaRaSa.MusicControl.Test
             _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.AudioCd);
 
             // act
-            IAudioUnit result = _sut.GetActiveUnit("cd");
+            IAudioUnit result = _sut.GetActiveUnit("cd", null);
 
             // assert
             result.GetType().Name.Should().Be("AudioCdUnit");
@@ -53,7 +54,7 @@ namespace PeKaRaSa.MusicControl.Test
             _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.Dvd);
 
             // act
-            IAudioUnit result = _sut.GetActiveUnit("cd");
+            IAudioUnit result = _sut.GetActiveUnit("cd", null);
 
             // assert
             result.GetType().Name.Should().Be("DvdUnit");
@@ -66,7 +67,7 @@ namespace PeKaRaSa.MusicControl.Test
             _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.Mp3);
 
             // act
-            IAudioUnit result = _sut.GetActiveUnit("cd");
+            IAudioUnit result = _sut.GetActiveUnit("cd", null);
 
             // assert
             result.GetType().Name.Should().Be("Mp3Unit");
@@ -79,17 +80,31 @@ namespace PeKaRaSa.MusicControl.Test
             _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.MultipleAlbumms);
 
             // act
-            IAudioUnit result = _sut.GetActiveUnit("cd");
+            IAudioUnit result = _sut.GetActiveUnit("cd", null);
 
             // assert
             result.GetType().Name.Should().Be("MultipleAlbummsUnit");
         }
 
         [Test]
+        public void GetActiveUnit_WhenUnitChanges_ThenKillIsCalled()
+        {
+            // arrange
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.MultipleAlbumms);
+            Mock<IAudioUnit> audioUnitMock = new Mock<IAudioUnit>();
+
+            // act
+            IAudioUnit result = _sut.GetActiveUnit("cd", audioUnitMock.Object);
+
+            // assert
+            audioUnitMock.Verify(m => m.Kill(), Times.Once);
+        }
+
+        [Test]
         public void GetActiveUnit_WhenCalledForNone_ThenNullIsReturned()
         {
             // act
-            IAudioUnit result = _sut.GetActiveUnit("none");
+            IAudioUnit result = _sut.GetActiveUnit("none", null);
 
             // assert
             result.Should().BeNull();
@@ -99,7 +114,7 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetDefaultUnit_WhenCalled_ThenRadioUnitIsReturned()
         {
             // arrange
-            _sut.GetActiveUnit("none");
+            _sut.GetActiveUnit("none", null);
 
             // act
             IAudioUnit result = _sut.GetDefaultUnit();
@@ -109,21 +124,36 @@ namespace PeKaRaSa.MusicControl.Test
         }
 
         [Test]
-        public void GetActiveUnit_WhenCalledForCdAndThenForRadioThenRadioIsReturnedWithoutBlocking()
+        public void GetActiveUnit_WhenCalledForCdAndThenForRadio_ThenRadioIsReturnedWithoutBlocking()
         {
-            // arrange
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Callback(() => Thread.Sleep(100));
+            // arrage
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Callback(() => Thread.SpinWait(5000));
+            Mock<IAudioUnit> audioUnitMock = new Mock<IAudioUnit>();
+
+            List<Thread> threads = new List<Thread>();
+            IAudioUnit result = null;
+
+            threads.Add(new Thread(() =>
+            {
+                // make shure "radio" is called after "cd"
+                Thread.Sleep(2);
+                result = _sut.GetActiveUnit("radio", audioUnitMock.Object);
+            }));
+            threads.Add(new Thread(() => result = _sut.GetActiveUnit("cd", audioUnitMock.Object)));
+            threads.Add(new Thread(() => result = _sut.GetActiveUnit("radio", audioUnitMock.Object)));
+            threads.Add(new Thread(() => result = _sut.GetActiveUnit("cd", audioUnitMock.Object)));
+
+            // act
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            // act
-            _sut.GetActiveUnit("cd");
-            IAudioUnit result = _sut.GetActiveUnit("radio");
+            threads.ForEach(t => t.Start());
+            threads.ForEach(t => t.Join());
 
-            //
-            timer.Stop();
+            // assert
             result.GetType().Name.Should().Be("RadioUnit");
-            timer.ElapsedMilliseconds.Should().BeLessThan(99);
+            timer.Stop();
+            timer.ElapsedMilliseconds.Should().BeLessThan(4999);
         }
     }
 }
