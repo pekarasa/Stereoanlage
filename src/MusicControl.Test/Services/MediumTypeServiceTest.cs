@@ -25,7 +25,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
         public void GetType_WhenAudioCdIsInserted_ThenReturnAudioCd()
         {
             // arrange
-            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("is open").Returns("drive is not ready").Returns("audio disc");
+            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("Disc found in drive: audio disc");
 
             // act
             MediumType resul = _sut.GetInsertedDiscType();
@@ -38,7 +38,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
         public void GetType_WhenMixedTypeIsInserted_ThenReturnAudioCd()
         {
             // arrange
-            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("is open").Returns("drive is not ready").Returns("mixed type CD (data/audio)");
+            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("mixed type CD (data/audio)");
 
             // act
             MediumType resul = _sut.GetInsertedDiscType();
@@ -51,7 +51,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
         public void GetType_WhenDvdIsInserted_ThenReturnDvd()
         {
             // arrange
-            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("is open").Returns("drive is not ready").Returns("data disc type 1");
+            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("data disc type 1");
             _opticalDiscService.Setup(m => m.FindFile("AUDIO_TS")).Returns(true);
 
             // act
@@ -67,7 +67,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
         public void GetType_WhenMMultipleAlbumsDiscIsInserted_ThenReturnDvd()
         {
             // arrange
-            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("is open").Returns("drive is not ready").Returns("data disc type 1");
+            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("data disc type 1");
             _opticalDiscService.Setup(m => m.FindFile("AUDIO_TS")).Returns(false);
             _opticalDiscService.Setup(m => m.FindFile("MultipleAlbums.md")).Returns(true);
 
@@ -84,7 +84,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
         public void GetType_WhenMp3DiscIsInserted_ThenReturnDvd()
         {
             // arrange
-            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("is open").Returns("drive is not ready").Returns("data disc type 1");
+            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("data disc type 1");
             _opticalDiscService.Setup(m => m.FindFile("AUDIO_TS")).Returns(false);
             _opticalDiscService.Setup(m => m.FindFile("MultipleAlbums.md")).Returns(false);
 
