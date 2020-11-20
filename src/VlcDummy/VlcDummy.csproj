@@ -3,22 +3,16 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>setcd</AssemblyName>
-    <RootNamespace>PeKaRaSa.SetcdDummy</RootNamespace>
+    <AssemblyName>cvlc</AssemblyName>
+    <RootNamespace>PeKaRaSa.Vlc</RootNamespace>
     <Authors>Peter Portmann</Authors>
     <Company>PeKaRaSa</Company>
     <Copyright>2020</Copyright>
-    <Description>Dummy to simulate setcd.</Description>
+    <Description>Dummy to simulate VLC media player.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>D:\work\Stereoanlage\src\MusicControl\bin\Debug\</OutputPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Update="setcd.dummy">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 
 </Project>
