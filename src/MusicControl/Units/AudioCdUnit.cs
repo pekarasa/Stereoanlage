@@ -11,7 +11,7 @@ namespace PeKaRaSa.MusicControl.Units
     {
         private readonly IMusicPlayerClient _mpc;
 
-        private bool _muted = false;
+        //private bool _muted = false;
         
         public AudioCdUnit(IMusicPlayerClient mpc)
         {

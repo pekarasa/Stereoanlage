@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PeKaRaSa.MusicControl.Services
 {
-    class FileAccess : IFileAccess
+    public class FileAccess : IFileAccess
     {
         readonly DirectoryInfo _directoryInfo;
 
