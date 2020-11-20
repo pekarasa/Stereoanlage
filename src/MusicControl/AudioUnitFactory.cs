@@ -1,5 +1,5 @@
 ﻿using PeKaRaSa.MusicControl.Services;
-using PeKaRaSa.MusicControl.Services.Player;
+using PeKaRaSa.MusicControl.Services.Players;
 using PeKaRaSa.MusicControl.Units;
 using System.Configuration;
 using System.Threading;

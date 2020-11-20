@@ -1,4 +1,4 @@
-﻿namespace PeKaRaSa.MusicControl.Services.Player
+﻿namespace PeKaRaSa.MusicControl.Services.Players
 {
     public interface IMusicPlayerClient
     {

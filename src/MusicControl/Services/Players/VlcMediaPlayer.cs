@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Net.Sockets;
 
-namespace PeKaRaSa.MusicControl.Services.Player
+namespace PeKaRaSa.MusicControl.Services.Players
 {
     /// <summary>
     /// Communicates via mpc with the music player deamon (mpd)
@@ -13,11 +13,11 @@ namespace PeKaRaSa.MusicControl.Services.Player
     /// </remarks>
     public class VlcMediaPlayer : IMusicPlayerClient
     {
-        private Int32 _port;
+        private int _port;
 
         public VlcMediaPlayer()
         {
-            if (!Int32.TryParse(ConfigurationManager.AppSettings["vlcPort"], out _port))
+            if (!int.TryParse(ConfigurationManager.AppSettings["vlcPort"], out _port))
             {
                 // Fallback: Set the port 13001.
                 _port = 13001;

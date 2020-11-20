@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using PeKaRaSa.MusicControl.Services.Player;
+using PeKaRaSa.MusicControl.Services.Players;
 
-namespace PeKaRaSa.MusicControl.Test.Services
+namespace PeKaRaSa.MusicControl.Test.Services.Players
 {
     public class MusicPlayerClientTest
     {

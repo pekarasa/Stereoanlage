@@ -1,4 +1,4 @@
-﻿using PeKaRaSa.MusicControl.Services.Player;
+﻿using PeKaRaSa.MusicControl.Services.Players;
 using System;
 using System.Diagnostics;
 
