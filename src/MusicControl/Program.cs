@@ -73,7 +73,7 @@ public class Program
                         isServerRunning = false;
                     }
 
-                    commandExecutor.Command(data.Split(' ').Select(a => a.Trim().ToLowerInvariant()));
+                    commandExecutor.Command(data.Trim().Split(' ').Select(a => a.Trim().ToLowerInvariant()));
 
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
