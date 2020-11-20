@@ -39,7 +39,7 @@ namespace PeKaRaSa.MusicControl.Test
         {
             // arrange
             _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.AudioCd);
-
+            LoopbackMock vlcMockPlayer = new LoopbackMock(13001);
             // act
             IAudioUnit result = _sut.GetActiveUnit("cd", null);
 
