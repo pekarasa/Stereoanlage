@@ -7,6 +7,8 @@ namespace PeKaRaSa.MusicControl.Units
     public abstract class AudioUnitBase : IAudioUnit
     {
         public abstract void Kill();
+        
+        public abstract void Start();
 
         /// <summary>
         /// Moves to the next channel
@@ -75,7 +77,7 @@ namespace PeKaRaSa.MusicControl.Units
         /// <summary>
         /// Ejecting the inserted medium
         /// </summary>
-        public void Eject() { }
+        public virtual void Eject() { }
 
         /// <summary>
         /// Recording the current audio output

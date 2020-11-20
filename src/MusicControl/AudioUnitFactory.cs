@@ -1,4 +1,5 @@
 ﻿using PeKaRaSa.MusicControl.Services;
+using PeKaRaSa.MusicControl.Services.Player;
 using PeKaRaSa.MusicControl.Units;
 using System.Configuration;
 using System.Threading;
@@ -10,23 +11,20 @@ namespace PeKaRaSa.MusicControl
         private readonly IMediumTypeService _mediumTypeService;
         private Thread _thread;
 
-        private readonly IMusicPlayerClient _mpc;
-        private readonly IFileAccess _fileAccess;
-        private readonly IPlaylistService _playlistService;
         private readonly IAudioUnit _radio;
+        private readonly IAudioUnit _audioCd;
 
         public AudioUnitFactory(IMediumTypeService mediumTypeService)
         {
             _mediumTypeService = mediumTypeService;
 
-            _mpc = new MusicPlayerClient();
-            _fileAccess = new FileAccess(ConfigurationManager.AppSettings["PathToPlaylists"]);
-            _playlistService = new PlaylistService(_fileAccess);
-            _radio = new RadioUnit(_mpc, _playlistService);
+            _radio = new RadioUnit(new MusicPlayerClient(), new PlaylistService(new FileAccess(ConfigurationManager.AppSettings["PathToPlaylists"])));
+            _audioCd = new AudioCdUnit(new VlcMediaPlayer());
         }
 
         public IAudioUnit GetActiveUnit(string unitToActivate, IAudioUnit currentUnit)
         {
+            IAudioUnit newUnit;
             switch (unitToActivate)
             {
                 case "radio":
@@ -39,7 +37,8 @@ namespace PeKaRaSa.MusicControl
                         } while (_thread != null);
                     }
 
-                    return _radio;
+                    newUnit = _radio;
+                    break;
                 case "cd":
                     MediumType type = MediumType.None;
                     try
@@ -58,25 +57,26 @@ namespace PeKaRaSa.MusicControl
                     {
                         _thread = null;
                     }
-                    IAudioUnit newUnit = type switch
+                    newUnit = type switch
                     {
-                        MediumType.AudioCd => _radio,
+                        MediumType.AudioCd => _audioCd,
                         MediumType.Dvd => _radio,
                         MediumType.Mp3 => _radio,
                         MediumType.MultipleAlbumms => _radio,
                         _ => currentUnit,
                     };
-
-                    // kill deactivated unit
-                    if (currentUnit != newUnit)
-                    {
-                        currentUnit?.Kill();
-                    }
-                    return newUnit;
-
+                    break;
                 default:
                     return null; // echo "$ActiveUnit: 1: unknown ActiveUnit" >> $musicCenterLog ;;
             };
+            // kill deactivated unit and start new unit
+            if (currentUnit != newUnit)
+            {
+                currentUnit?.Kill();
+                newUnit?.Start();
+            }
+
+            return newUnit;
         }
 
         public IAudioUnit GetDefaultUnit()

@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using PeKaRaSa.MusicControl.Services;
+using PeKaRaSa.MusicControl.Services.Player;
 
 namespace PeKaRaSa.MusicControl.Test.Services
 {

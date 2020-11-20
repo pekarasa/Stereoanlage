@@ -1,4 +1,5 @@
 ﻿using PeKaRaSa.MusicControl.Services;
+using PeKaRaSa.MusicControl.Services.Player;
 using System;
 
 namespace PeKaRaSa.MusicControl.Units
@@ -22,6 +23,11 @@ namespace PeKaRaSa.MusicControl.Units
         public override void Kill()
         {
             _mpc.Send("stop");
+        }
+
+        public override void Start()
+        {
+            Play();
         }
 
         public override void Pause()

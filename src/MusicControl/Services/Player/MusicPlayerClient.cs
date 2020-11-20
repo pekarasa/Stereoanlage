@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace PeKaRaSa.MusicControl.Services
+namespace PeKaRaSa.MusicControl.Services.Player
 {
     /// <summary>
     /// Communicates via mpc with the music player deamon (mpd)

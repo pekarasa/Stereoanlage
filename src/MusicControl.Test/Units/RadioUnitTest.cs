@@ -1,6 +1,7 @@
 ﻿using Moq;
 using NUnit.Framework;
 using PeKaRaSa.MusicControl.Services;
+using PeKaRaSa.MusicControl.Services.Player;
 using PeKaRaSa.MusicControl.Units;
 
 namespace PeKaRaSa.MusicControl.Test.Units

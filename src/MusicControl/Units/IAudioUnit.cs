@@ -13,6 +13,14 @@ namespace PeKaRaSa.MusicControl.Units
         void Kill();
 
         /// <summary>
+        /// Starts playback of the audio unit after switching from an other audio unit
+        /// </summary>
+        /// <remarks>
+        /// The result must be that the audio unit plays the first track.
+        /// </remarks>
+        void Start();
+
+        /// <summary>
         /// Stop the Audio Unit to switch to a new Audio Unit or to shut down this machine
         /// </summary>
         void PowerOff();
