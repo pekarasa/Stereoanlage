@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>setcd</AssemblyName>
+    <RootNamespace>PeKaRaSa.SetcdDummy</RootNamespace>
+    <Authors>Peter Portmann</Authors>
+    <Company>PeKaRaSa</Company>
+    <Copyright>2020</Copyright>
+    <Description>Dummy to simulate console applications.</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>D:\work\Stereoanlage\src\MusicControl\bin\Debug\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="setcd.dummy">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
