@@ -33,8 +33,10 @@ namespace PeKaRaSa.MusicControl
             // Check whether a new component should be activated
             if ("changeUnit".Equals(command, StringComparison.CurrentCultureIgnoreCase))
             {
+                Console.WriteLine($"current unit '{_activeUnit?.GetType().Name}'");
                 string unitToActivate = arguments.Last();
                 _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit);
+                Console.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
                 return;
             }
 
@@ -49,6 +51,8 @@ namespace PeKaRaSa.MusicControl
         private void SendCommandToActiveUnit(IEnumerable<string> arguments)
         {
             string command = arguments.First();
+
+            Console.WriteLine($"send {command} to unit '{_activeUnit?.GetType().Name}'");
 
             switch (command)
             {

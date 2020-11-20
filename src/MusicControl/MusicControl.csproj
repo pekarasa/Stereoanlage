@@ -7,7 +7,7 @@
     <RootNamespace>PeKaRaSa.MusicControl</RootNamespace>
     <Authors>Peter Portmann</Authors>
     <Company>PeKaRaSa</Company>
-    <Description>Program which receives commands via port 13000 and controls the individual components of the music control.</Description>
+    <Description>Program which receives commands via port and controls the individual components of the music control.</Description>
     <Copyright>2020</Copyright>
   </PropertyGroup>
 
