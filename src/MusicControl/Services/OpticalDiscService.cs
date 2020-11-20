@@ -22,8 +22,7 @@ namespace PeKaRaSa.MusicControl.Services
 
         public string GetInfo()
         {
-            // todo: remove the default value and replace it with "not ready"
-            string output = "audio disc";
+            string output = "Drive is not ready";
 
             try
             {

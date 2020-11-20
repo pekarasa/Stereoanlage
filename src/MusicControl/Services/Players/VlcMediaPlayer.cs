@@ -26,15 +26,14 @@ namespace PeKaRaSa.MusicControl.Services.Players
 
         public void Send(string command)
         {
-            using (var tcpClient = new TcpClient("localhost", _port))
-            using (var stream = tcpClient.GetStream())
-            {
-                byte[] data = System.Text.Encoding.ASCII.GetBytes(command);
-                stream.Write(data, 0, data.Length);
-                // echo "$1" | netcat localhost 12345 -q 1
-                stream.Close();
-                tcpClient.Close();
-            }
+            using var tcpClient = new TcpClient("localhost", _port);
+            using var stream = tcpClient.GetStream();
+
+            byte[] data = System.Text.Encoding.ASCII.GetBytes(command);
+            stream.Write(data, 0, data.Length);
+
+            stream.Close();
+            tcpClient.Close();
         }
     }
 }

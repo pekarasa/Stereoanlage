@@ -14,12 +14,12 @@ namespace PeKaRaSa.MusicControl.Services
             _opticalDiscService = opticalDiscService;
             if (!int.TryParse(ConfigurationManager.AppSettings["MillisecondsToSleepWhenDriveIsNotReady"], out _millisecondsToSleepWhenDriveIsNotReady))
             {
-                _millisecondsToSleepWhenDriveIsNotReady = 500;
+                _millisecondsToSleepWhenDriveIsNotReady = 1000;
             }
 
             if (!int.TryParse(ConfigurationManager.AppSettings["MillisecondsToSleepWhenDriveIsOpen"], out _millisecondsToSleepWhenDriveIsOpen))
             {
-                _millisecondsToSleepWhenDriveIsOpen = 500;
+                _millisecondsToSleepWhenDriveIsOpen = 3000;
             }
         }
 
@@ -27,40 +27,48 @@ namespace PeKaRaSa.MusicControl.Services
         {
             while (true)
             {
-                string info = _opticalDiscService.GetInfo();
-
-                if (info.Contains("not ready"))
+                try
                 {
-                    Thread.SpinWait(_millisecondsToSleepWhenDriveIsNotReady);
-                }
+                    string info = _opticalDiscService.GetInfo().ToLowerInvariant();
 
-                if (info.Contains("is open"))
-                {
-                    Thread.SpinWait(_millisecondsToSleepWhenDriveIsOpen);
-                }
-
-                if (info.Contains("mixed type CD (data/audio)") || info.Contains("audio disc"))
-                {
-                    return MediumType.AudioCd;
-                }
-
-                if (info.Contains("data disc type 1"))
-                {
-                    // DataCD or DVD
-                    _opticalDiscService.Unmount();
-                    _opticalDiscService.Mount();
-                    bool isDvd = _opticalDiscService.FindFile("AUDIO_TS");
-                    if (isDvd)
+                    if (info.Contains("no disc inserted"))
                     {
-                        return MediumType.Dvd;
+                        Thread.SpinWait(_millisecondsToSleepWhenDriveIsNotReady);
                     }
-
-                    bool isMultipleAlbumms = _opticalDiscService.FindFile("MultipleAlbums.md");
-                    if (isMultipleAlbumms)
+                    else if (info.Contains("is open"))
                     {
-                        return MediumType.MultipleAlbumms;
+                        Thread.SpinWait(_millisecondsToSleepWhenDriveIsOpen);
                     }
-                    return MediumType.Mp3;
+                    else if (info.Contains("not ready"))
+                    {
+                        Thread.SpinWait(_millisecondsToSleepWhenDriveIsNotReady);
+                    }
+                    else if (info.Contains("mixed type CD (data/audio)") || info.Contains("audio disc"))
+                    {
+                        return MediumType.AudioCd;
+                    }
+                    else if (info.Contains("data disc type 1"))
+                    {
+                        // DataCD or DVD
+                        _opticalDiscService.Unmount();
+                        _opticalDiscService.Mount();
+                        bool isDvd = _opticalDiscService.FindFile("AUDIO_TS");
+                        if (isDvd)
+                        {
+                            return MediumType.Dvd;
+                        }
+
+                        bool isMultipleAlbumms = _opticalDiscService.FindFile("MultipleAlbums.md");
+                        if (isMultipleAlbumms)
+                        {
+                            return MediumType.MultipleAlbumms;
+                        }
+                        return MediumType.Mp3;
+                    }
+                }
+                catch 
+                {
+                    return MediumType.None;
                 }
             }
         }

@@ -63,7 +63,7 @@ namespace PeKaRaSa.MusicControl
                         MediumType.Dvd => _radio,
                         MediumType.Mp3 => _radio,
                         MediumType.MultipleAlbumms => _radio,
-                        _ => currentUnit,
+                        _ => _radio,
                     };
                     break;
                 default:
