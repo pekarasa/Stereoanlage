@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Threading;
 
 namespace PeKaRaSa.MusicControl.Services
@@ -29,21 +30,21 @@ namespace PeKaRaSa.MusicControl.Services
             {
                 try
                 {
-                    string info = _opticalDiscService.GetInfo().ToLowerInvariant();
+                    string info = _opticalDiscService.GetInfo();
 
-                    if (info.Contains("no disc inserted"))
+                    if (info.Contains("no disc inserted", StringComparison.OrdinalIgnoreCase))
                     {
                         Thread.SpinWait(_millisecondsToSleepWhenDriveIsNotReady);
                     }
-                    else if (info.Contains("is open"))
+                    else if (info.Contains("is open", StringComparison.OrdinalIgnoreCase))
                     {
                         Thread.SpinWait(_millisecondsToSleepWhenDriveIsOpen);
                     }
-                    else if (info.Contains("not ready"))
+                    else if (info.Contains("not ready", StringComparison.OrdinalIgnoreCase))
                     {
                         Thread.SpinWait(_millisecondsToSleepWhenDriveIsNotReady);
                     }
-                    else if (info.Contains("mixed type CD (data/audio)") || info.Contains("audio disc"))
+                    else if (info.Contains("mixed type CD (data/audio)", StringComparison.OrdinalIgnoreCase) || info.Contains("audio disc"))
                     {
                         return MediumType.AudioCd;
                     }
