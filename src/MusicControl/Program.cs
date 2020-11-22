@@ -1,7 +1,6 @@
 ﻿using PeKaRaSa.MusicControl;
 using PeKaRaSa.MusicControl.Services;
 using System;
-using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -23,11 +22,7 @@ public class Program
 
         try
         {
-            if(!Int32.TryParse(ConfigurationManager.AppSettings["Port"], out Int32 port))
-            {
-                // Fallback: Set the TcpListener on port 13000.
-                port = 13000;
-            }
+            int port = AppSettings.GetInt32OrDefault("Port", 13000);
             IPAddress localAddr = IPAddress.Parse("127.0.0.1");
 
             // TcpListener server = new TcpListener(port);
@@ -57,29 +52,30 @@ public class Program
                 // Get a stream object for reading and writing
                 NetworkStream stream = client.GetStream();
 
-                int i;
-
                 // Loop to receive all the data sent by the client.
-                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                int i = stream.Read(bytes, 0, bytes.Length);
+                // Translate data bytes to a ASCII string.
+                data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+
+                Console.WriteLine(data);
+
+
+                // Process the data sent by the client.
+                System.Collections.Generic.IEnumerable<string> arguments = data.Split(' ').Select(a => a.Trim().ToLower());
+
+                if (data.StartsWith("shutdown"))
                 {
-                    // Translate data bytes to a ASCII string.
-                    data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-
-                    // Process the data sent by the client.
-                    System.Collections.Generic.IEnumerable<string> arguments = data.Split(' ').Select(a => a.Trim().ToLower());
-
-                    if (data.StartsWith("shutdown"))
-                    {
-                        isServerRunning = false;
-                    }
-
-                    commandExecutor.Command(data.Trim().Split(' ').Select(a => a.Trim().ToLowerInvariant()));
-
-                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-
-                    // Send back a response.
-                    stream.Write(msg, 0, msg.Length);
+                    isServerRunning = false;
+                    client.Close();
+                    return;
                 }
+
+                commandExecutor.Command(data.Trim().Split(' ').Select(a => a.Trim().ToLowerInvariant()));
+
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+
+                // Send back a response.
+                stream.Write(msg, 0, msg.Length);
 
                 // Shutdown and end connection
                 client.Close();

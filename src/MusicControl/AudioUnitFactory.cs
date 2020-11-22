@@ -1,7 +1,6 @@
 ﻿using PeKaRaSa.MusicControl.Services;
 using PeKaRaSa.MusicControl.Services.Players;
 using PeKaRaSa.MusicControl.Units;
-using System.Configuration;
 using System.Threading;
 
 namespace PeKaRaSa.MusicControl
@@ -18,7 +17,7 @@ namespace PeKaRaSa.MusicControl
         {
             _mediumTypeService = mediumTypeService;
 
-            _radio = new RadioUnit(new MusicPlayerClient(), new PlaylistService(new FileAccess(ConfigurationManager.AppSettings["PathToPlaylists"])));
+            _radio = new RadioUnit(new MusicPlayerClient(), new PlaylistService(new FileAccess(AppSettings.GetValueOrDefault("PathToPlaylists", "/home/pi/mpd/playlists"))));
             _audioCd = new AudioCdUnit(new VlcMediaPlayer());
         }
 

@@ -13,15 +13,8 @@ namespace PeKaRaSa.MusicControl.Services
         public MediumTypeService(IOpticalDiscService opticalDiscService)
         {
             _opticalDiscService = opticalDiscService;
-            if (!int.TryParse(ConfigurationManager.AppSettings["MillisecondsToSleepWhenDriveIsNotReady"], out _millisecondsToSleepWhenDriveIsNotReady))
-            {
-                _millisecondsToSleepWhenDriveIsNotReady = 1000;
-            }
-
-            if (!int.TryParse(ConfigurationManager.AppSettings["MillisecondsToSleepWhenDriveIsOpen"], out _millisecondsToSleepWhenDriveIsOpen))
-            {
-                _millisecondsToSleepWhenDriveIsOpen = 3000;
-            }
+            _millisecondsToSleepWhenDriveIsNotReady = AppSettings.GetInt32OrDefault("MillisecondsToSleepWhenDriveIsNotReady", 1000);
+            _millisecondsToSleepWhenDriveIsOpen = AppSettings.GetInt32OrDefault("MillisecondsToSleepWhenDriveIsOpen", 3000);
         }
 
         public MediumType GetInsertedDiscType()

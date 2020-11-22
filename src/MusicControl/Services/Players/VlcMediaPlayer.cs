@@ -1,6 +1,4 @@
-﻿using System;
-using System.Configuration;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
 namespace PeKaRaSa.MusicControl.Services.Players
 {
@@ -17,11 +15,7 @@ namespace PeKaRaSa.MusicControl.Services.Players
 
         public VlcMediaPlayer()
         {
-            if (!int.TryParse(ConfigurationManager.AppSettings["vlcPort"], out _port))
-            {
-                // Fallback: Set the port 13001.
-                _port = 13001;
-            }
+            _port = AppSettings.GetInt32OrDefault("vlcPort", 13001);
         }
 
         public void Send(string command)

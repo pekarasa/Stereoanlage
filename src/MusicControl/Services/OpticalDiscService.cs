@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Diagnostics;
 
 namespace PeKaRaSa.MusicControl.Services
@@ -11,8 +10,8 @@ namespace PeKaRaSa.MusicControl.Services
 
         public OpticalDiscService()
         {
-            _opticalDevice = ConfigurationManager.AppSettings["OpticalDevice"];
-            _opticalMountpoint = ConfigurationManager.AppSettings["OpticalMountpoint"];
+            _opticalDevice = AppSettings.GetValueOrDefault("OpticalDevice", "/dev/sr0");
+            _opticalMountpoint = AppSettings.GetValueOrDefault("OpticalMountpoint", "/home/pi/mpd/music/mnt");
         }
 
         public bool FindFile(string v)
