@@ -1,14 +1,12 @@
 ﻿using PeKaRaSa.MusicControl.Services;
 using PeKaRaSa.MusicControl.Services.Players;
 using PeKaRaSa.MusicControl.Units;
-using System.Threading;
 
 namespace PeKaRaSa.MusicControl
 {
     public class AudioUnitFactory : IAudioUnitFactory
     {
         private readonly IMediumTypeService _mediumTypeService;
-        private Thread _thread;
 
         private readonly IAudioUnit _radio;
         private readonly IAudioUnit _audioCd;
@@ -27,49 +25,26 @@ namespace PeKaRaSa.MusicControl
             switch (unitToActivate)
             {
                 case "radio":
-                    if (_thread != null)
-                    {
-                        _thread.Interrupt();
-                        do
-                        {
-                            Thread.Sleep(10);
-                        } while (_thread != null);
-                    }
-
                     newUnit = _radio;
                     break;
                 case "cd":
                     MediumType type = MediumType.None;
-                    try
-                    {
-                        _thread = new Thread(() => type = _mediumTypeService.GetInsertedDiscType())
-                        {
-                            Priority = ThreadPriority.Lowest
-                        };
-                        _thread.Start();
-                        _thread.Join();
-                    }
-                    catch (ThreadInterruptedException)
-                    {
-                    }
-                    finally
-                    {
-                        _thread = null;
-                    }
+                    type = _mediumTypeService.GetInsertedDiscType();
                     newUnit = type switch
                     {
                         MediumType.AudioCd => _audioCd,
                         MediumType.Dvd => _radio,
                         MediumType.Mp3 => _radio,
                         MediumType.MultipleAlbumms => _radio,
-                        _ => _radio,
+                        _ => null,
                     };
                     break;
                 default:
                     return null; // echo "$ActiveUnit: 1: unknown ActiveUnit" >> $musicCenterLog ;;
             };
-            // kill deactivated unit and start new unit
-            if (currentUnit != newUnit)
+
+            // when switching to a new unit, the old unit is deactivated and the new unit is started
+            if (newUnit != null && currentUnit != newUnit)
             {
                 currentUnit?.Kill();
                 newUnit?.Start();

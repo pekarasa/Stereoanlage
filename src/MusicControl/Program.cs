@@ -1,6 +1,7 @@
 ﻿using PeKaRaSa.MusicControl;
 using PeKaRaSa.MusicControl.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -49,36 +50,29 @@ public class Program
 
                 data = null;
 
-                // Get a stream object for reading and writing
-                NetworkStream stream = client.GetStream();
+                using (NetworkStream stream = client.GetStream())
+                {
+                    int i = stream.Read(bytes, 0, bytes.Length);
+                    data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                    Console.WriteLine(data);
+                    byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+                    stream.Write(msg, 0, msg.Length);
+                    client.Close();
+                }
 
-                // Loop to receive all the data sent by the client.
-                int i = stream.Read(bytes, 0, bytes.Length);
-                // Translate data bytes to a ASCII string.
-                data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-
-                Console.WriteLine(data);
-
-
-                // Process the data sent by the client.
-                System.Collections.Generic.IEnumerable<string> arguments = data.Split(' ').Select(a => a.Trim().ToLower());
+                IEnumerable<string> arguments = data.Split(' ').Select(a => a.Trim().ToLower());
 
                 if (data.StartsWith("shutdown"))
                 {
                     isServerRunning = false;
-                    client.Close();
                     return;
                 }
+                else
+                {
+                    List<string> commands = data.Trim().Split(' ').Select(a => a.Trim().ToLowerInvariant()).ToList();
+                    commandExecutor.Command(commands);
+                }
 
-                commandExecutor.Command(data.Trim().Split(' ').Select(a => a.Trim().ToLowerInvariant()));
-
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-
-                // Send back a response.
-                stream.Write(msg, 0, msg.Length);
-
-                // Shutdown and end connection
-                client.Close();
             }
         }
         catch (SocketException e)

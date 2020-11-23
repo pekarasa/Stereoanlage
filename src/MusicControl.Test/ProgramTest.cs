@@ -37,8 +37,11 @@ namespace PeKaRaSa.MusicControl.Test
 
                     // act
                     Send("changeUnit cd");
+                    Thread.Sleep(1000);
                     Send("changeUnit radio");
+                    Thread.Sleep(3000);
                     Send("poweroff");
+                    Thread.Sleep(3000);
                     Send("shutdown");
                     process.WaitForExit();
 
