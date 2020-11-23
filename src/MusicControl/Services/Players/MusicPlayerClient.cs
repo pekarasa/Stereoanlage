@@ -29,7 +29,7 @@ namespace PeKaRaSa.MusicControl.Services.Players
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"Exception during mpc: {e.Message}");
             }
         }
     }

@@ -48,7 +48,7 @@ namespace PeKaRaSa.MusicControl.Test
             }
             catch (Exception e)
             {
-                Assert.Fail($"{e.Message}");
+                Assert.Fail(e.Message);
             }
         }
 

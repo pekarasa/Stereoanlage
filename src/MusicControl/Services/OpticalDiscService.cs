@@ -34,8 +34,8 @@ namespace PeKaRaSa.MusicControl.Services
                     process.StartInfo.RedirectStandardOutput = true;
                     process.Start();
 
-                    output = process.StandardOutput.ReadToEnd();
                     process.WaitForExit();
+                    output = process.StandardOutput.ReadToEnd();
                 }
             }
             catch (Exception e)
@@ -62,7 +62,7 @@ namespace PeKaRaSa.MusicControl.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"Exception during mount: {e.Message}");
             }
         }
 
@@ -81,7 +81,7 @@ namespace PeKaRaSa.MusicControl.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"Exception during umount: { e.Message}");
             }
         }
     }
