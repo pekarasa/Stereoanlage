@@ -1,14 +1,8 @@
 ﻿using FluentAssertions;
-using Moq;
 using NUnit.Framework;
-using PeKaRaSa.MusicControl.Services;
-using PeKaRaSa.MusicControl.Units;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 
 namespace PeKaRaSa.MusicControl.Test
