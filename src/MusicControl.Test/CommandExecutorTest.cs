@@ -1,6 +1,8 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using PeKaRaSa.MusicControl.Units;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -47,6 +49,7 @@ namespace PeKaRaSa.MusicControl.Test
         [Test]
         public void Command_WhenChangeUnitFromRadioToRadio_ThenActiveUnitStaysRadio()
         {
+            // arrange
             _factoryMock.Setup(m => m.GetDefaultUnit()).Returns(_audioUnitMock.Object);
             _factoryMock.Setup(m => m.GetActiveUnit("radio", _audioUnitMock.Object, It.IsAny<CancellationToken>())).Returns(_audioUnitMock.Object);
 
@@ -62,15 +65,58 @@ namespace PeKaRaSa.MusicControl.Test
         [Test]
         public void Command_WhenCommandIsGiven_ThenThisCommandIsCalled()
         {
+            // arrange
             _factoryMock.Setup(m => m.GetDefaultUnit()).Returns(_audioUnitMock.Object);
+            string[] arguments = "volume up".Split(' ');
 
             // act
-            string[] arguments = "volume up".Split(' ');
             _sut.Command(arguments);
 
             // assert
             _audioUnitMock.Verify(m => m.VolumeUp(), Times.Once);
         }
 
+        [Test]
+        public void Command_WhenTheFirstThreadSwitchesToCdAndTheSecondThreadSwitchesToRadio_ThenCdIsCanceledAndRadioIsReturnedWithoutBlocking()
+        {
+            // arrange
+            IAudioUnit radio = new RadioUnit(null, null);
+            Mock<IAudioUnitFactory> factoryMock = new Mock<IAudioUnitFactory>();
+            factoryMock.Setup(m => m.GetDefaultUnit()).Returns(radio);
+
+            factoryMock.Setup(m => m.GetActiveUnit("cd", It.IsAny<IAudioUnit>(), It.IsAny<CancellationToken>()))
+                .Callback((string unitToActivate, IAudioUnit u, CancellationToken token) =>
+            {
+                Thread.Sleep(2000);
+                // assert
+                unitToActivate.Should().Be("cd");
+                token.IsCancellationRequested.Should().Be(true);
+                token.ThrowIfCancellationRequested();
+            });
+
+            factoryMock.Setup(m => m.GetActiveUnit("radio", It.IsAny<IAudioUnit>(), It.IsAny<CancellationToken>())).Returns(radio);
+
+            CommandExecutor sut = new CommandExecutor(factoryMock.Object);
+
+            string[] cdArguments = "changeUnit cd".Split(' ');
+            string[] radioArguments = "changeUnit radio".Split(' ');
+            List<Thread> threads = new List<Thread>();
+
+            threads.Add(new Thread(() =>
+            {
+                // make shure "radio" is called after "cd"
+                Thread.Sleep(50);
+                sut.Command(radioArguments); ;
+            }));
+            threads.Add(new Thread(() => sut.Command(cdArguments)));
+
+            // act
+            threads.ForEach(t => t.Start());
+            threads.ForEach(t => t.Join());
+
+            // assert
+            factoryMock.Verify(m => m.GetActiveUnit("cd", It.IsAny<IAudioUnit>(), It.IsAny<CancellationToken>()), Times.Once);
+            factoryMock.Verify(m => m.GetActiveUnit("radio", It.IsAny<IAudioUnit>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

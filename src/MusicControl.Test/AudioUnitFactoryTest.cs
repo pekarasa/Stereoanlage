@@ -125,36 +125,5 @@ namespace PeKaRaSa.MusicControl.Test
             // assert
             result.GetType().Name.Should().Be("RadioUnit");
         }
-
-        [Test]
-        public void GetActiveUnit_WhenTheFirstThreadSwitchesToCdAndTheSecondThreadSwitchesToRadio_ThenCdIsCanceledAndRadioIsReturnedWithoutBlocking()
-        {
-            // arrage
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Callback(() => Thread.Sleep(5000));
-            Mock<IAudioUnit> audioUnitMock = new Mock<IAudioUnit>();
-
-            List<Thread> threads = new List<Thread>();
-            IAudioUnit result = null;
-
-            threads.Add(new Thread(() =>
-            {
-                // make shure "radio" is called after "cd"
-                Thread.Sleep(2);
-                result = _sut.GetActiveUnit("radio", audioUnitMock.Object, _cancellationToken);
-            }));
-            threads.Add(new Thread(() => result = _sut.GetActiveUnit("cd", audioUnitMock.Object, _cancellationToken)));
-
-            // act
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-
-            threads.ForEach(t => t.Start());
-            threads.ForEach(t => t.Join());
-
-            // assert
-            result.GetType().Name.Should().Be("RadioUnit");
-            timer.Stop();
-            timer.ElapsedMilliseconds.Should().BeLessThan(4999);
-        }
     }
 }

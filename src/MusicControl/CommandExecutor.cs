@@ -40,22 +40,21 @@ namespace PeKaRaSa.MusicControl
             {
                 Log.WriteLine($"current unit '{_activeUnit?.GetType().Name}'");
                 string unitToActivate = arguments.Last();
+                Log.WriteLine($"changeUnit called for {unitToActivate}");
 
                 lock (_factory)
                 {
-                    _cdUnitTokenSource = new CancellationTokenSource();
-                    CancellationToken token = _cdUnitTokenSource.Token;
-
                     // Should a unit other than the CD unit be activated?
                     if (unitToActivate != "cd")
                     {
-                        _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, token);
-                        Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
                         if (_cdUnitTokenSource != null)
                         {
                             _cdUnitTokenSource.Cancel();
                             _cdUnitTokenSource = null;
                         }
+
+                        _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, new CancellationTokenSource().Token);
+                        Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
                     }
                     // Is the cd activation already running and not cancelled?
                     else if (_cdUnitTokenSource != null && !_cdUnitTokenSource.IsCancellationRequested)
@@ -64,9 +63,13 @@ namespace PeKaRaSa.MusicControl
                     }
                     else 
                     {
+                        _cdUnitTokenSource = new CancellationTokenSource();
+                        CancellationToken token = _cdUnitTokenSource.Token;
+                        string cdUnit = unitToActivate;
+
                         Task.Factory.StartNew(() =>
                         {
-                            _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, token);
+                            _activeUnit = _factory.GetActiveUnit(cdUnit, _activeUnit, token);
                             Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
                             _cdUnitTokenSource = null;
                         }, token).ContinueWith((t) =>
