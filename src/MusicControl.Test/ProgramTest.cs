@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
@@ -12,6 +13,9 @@ namespace PeKaRaSa.MusicControl.Test
         [SetUp]
         public void Setup()
         {
+            ConfigurationManager.AppSettings["MillisecondsToSleepWhenDriveIsNotReady"] = "10000";
+            ConfigurationManager.AppSettings["MillisecondsToSleepWhenDriveIsOpen"] = "10000";
+
         }
 
         [Test]
@@ -31,9 +35,9 @@ namespace PeKaRaSa.MusicControl.Test
 
                     // act
                     Send("changeUnit cd");
-                    Thread.Sleep(1000);
+                    Thread.Sleep(400);
                     Send("changeUnit radio");
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
                     Send("poweroff");
                     Thread.Sleep(3000);
                     Send("shutdown");

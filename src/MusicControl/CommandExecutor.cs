@@ -3,6 +3,8 @@ using PeKaRaSa.MusicControl.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PeKaRaSa.MusicControl
 {
@@ -10,10 +12,12 @@ namespace PeKaRaSa.MusicControl
     {
         private readonly IAudioUnitFactory _factory;
         private IAudioUnit _activeUnit;
+        private Dictionary<string, CancellationTokenSource> _startedTasks;
 
         public CommandExecutor(IAudioUnitFactory factory)
         {
             _factory = factory;
+            _startedTasks = new Dictionary<string, CancellationTokenSource>();
             _activeUnit = _factory.GetDefaultUnit();
         }
 
@@ -36,8 +40,44 @@ namespace PeKaRaSa.MusicControl
             {
                 Log.WriteLine($"current unit '{_activeUnit?.GetType().Name}'");
                 string unitToActivate = arguments.Last();
-                _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit);
-                Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
+
+                lock (_startedTasks)
+                {
+
+                    // Checks that no task is running for the audio unit to be activated or that it has already been cancelled
+                    if (!_startedTasks.TryGetValue(unitToActivate, out CancellationTokenSource task) || task.IsCancellationRequested)
+                    {
+                        if (task != null)
+                        {
+                            // remove cancelled task
+                            _startedTasks.Remove(unitToActivate);
+                        }
+
+                        // Tasks which are already running for other audio units will be aborted
+                        foreach (KeyValuePair<string, CancellationTokenSource> taskToStop in _startedTasks)
+                        {
+                            taskToStop.Value.Cancel();
+                        }
+
+                        // a new task is started
+                        CancellationTokenSource tokenSource = new CancellationTokenSource();
+                        CancellationToken token = tokenSource.Token;
+                        _startedTasks.Add(unitToActivate, tokenSource);
+
+                        Task.Factory.StartNew(() =>
+                        {
+                            _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, token);
+                            Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
+                            _startedTasks.Remove(_activeUnit?.GetType().Name);
+                        }, token).ContinueWith((t) =>
+                        {
+                        // _activeUnit must be unchanged
+                        Log.WriteLine($"unchanged unit '{_activeUnit?.GetType().Name}'");
+                            _startedTasks.Remove(_activeUnit?.GetType().Name);
+                        }, TaskContinuationOptions.OnlyOnCanceled);
+                    }
+                }
+
                 return;
             }
 

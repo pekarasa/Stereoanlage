@@ -13,11 +13,11 @@ namespace PeKaRaSa.MusicControl.Services
         public MediumTypeService(IOpticalDiscService opticalDiscService)
         {
             _opticalDiscService = opticalDiscService;
-            _millisecondsToSleepWhenDriveIsNotReady = AppSettings.GetInt32OrDefault("MillisecondsToSleepWhenDriveIsNotReady", 200000000);
-            _millisecondsToSleepWhenDriveIsOpen = AppSettings.GetInt32OrDefault("MillisecondsToSleepWhenDriveIsOpen", 400000000);
+            _millisecondsToSleepWhenDriveIsNotReady = AppSettings.GetInt32OrDefault("MillisecondsToSleepWhenDriveIsNotReady", 200);
+            _millisecondsToSleepWhenDriveIsOpen = AppSettings.GetInt32OrDefault("MillisecondsToSleepWhenDriveIsOpen", 200);
         }
 
-        public MediumType GetInsertedDiscType()
+        public MediumType GetInsertedDiscType(CancellationToken token)
         {
             while (true)
             {
@@ -27,15 +27,15 @@ namespace PeKaRaSa.MusicControl.Services
 
                     if (info.Contains("no disc inserted", StringComparison.OrdinalIgnoreCase))
                     {
-                        Thread.SpinWait(_millisecondsToSleepWhenDriveIsNotReady);
+                        Thread.Sleep(_millisecondsToSleepWhenDriveIsNotReady);
                     }
                     else if (info.Contains("is open", StringComparison.OrdinalIgnoreCase))
                     {
-                        Thread.SpinWait(_millisecondsToSleepWhenDriveIsOpen);
+                        Thread.Sleep(_millisecondsToSleepWhenDriveIsOpen);
                     }
                     else if (info.Contains("not ready", StringComparison.OrdinalIgnoreCase))
                     {
-                        Thread.SpinWait(_millisecondsToSleepWhenDriveIsNotReady);
+                        Thread.Sleep(_millisecondsToSleepWhenDriveIsNotReady);
                     }
                     else if (info.Contains("mixed type CD (data/audio)", StringComparison.OrdinalIgnoreCase) || info.Contains("audio disc"))
                     {
@@ -58,6 +58,10 @@ namespace PeKaRaSa.MusicControl.Services
                             return MediumType.MultipleAlbumms;
                         }
                         return MediumType.Mp3;
+                    }
+                    if (token.IsCancellationRequested)
+                    {
+                        return MediumType.None;
                     }
                 }
                 catch 

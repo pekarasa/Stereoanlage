@@ -14,11 +14,14 @@ namespace PeKaRaSa.MusicControl.Test
     {
         private AudioUnitFactory _sut;
         private Mock<IMediumTypeService> _mediumTypeService;
+        private CancellationToken _cancellationToken;
 
         [SetUp]
         public void Setup()
         {
             ConfigurationManager.AppSettings["PathToPlaylists"] = "blo";
+            CancellationTokenSource cts = new CancellationTokenSource();
+            _cancellationToken = cts.Token;
             _mediumTypeService = new Mock<IMediumTypeService>();
 
             _sut = new AudioUnitFactory(_mediumTypeService.Object);
@@ -28,7 +31,7 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenCalledForRadio_ThenRadioUnitIsReturned()
         {
             // act
-            IAudioUnit result = _sut.GetActiveUnit("radio", null);
+            IAudioUnit result = _sut.GetActiveUnit("radio", null, _cancellationToken);
 
             // assert
             result.GetType().Name.Should().Be("RadioUnit");
@@ -38,10 +41,10 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenCalledForCdAndAudioCdIsInserte_ThenAudioCdUnitIsReturned()
         {
             // arrange
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.AudioCd);
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.AudioCd);
             LoopbackMock vlcMockPlayer = new LoopbackMock(13001);
             // act
-            IAudioUnit result = _sut.GetActiveUnit("cd", null);
+            IAudioUnit result = _sut.GetActiveUnit("cd", null, _cancellationToken);
 
             // assert
             result.GetType().Name.Should().Be("AudioCdUnit");
@@ -51,10 +54,10 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenCalledForCdAnDvdIsInserte_ThenDvdUnitIsReturned()
         {
             // arrange
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.Dvd);
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.Dvd);
 
             // act
-            IAudioUnit result = _sut.GetActiveUnit("cd", null);
+            IAudioUnit result = _sut.GetActiveUnit("cd", null, _cancellationToken);
 
             // assert
             result.GetType().Name.Should().Be("DvdUnit");
@@ -64,10 +67,10 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenCalledForCdAnMp3CdIsInserte_ThenMp3UnitIsReturned()
         {
             // arrange
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.Mp3);
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.Mp3);
 
             // act
-            IAudioUnit result = _sut.GetActiveUnit("cd", null);
+            IAudioUnit result = _sut.GetActiveUnit("cd", null, _cancellationToken);
 
             // assert
             result.GetType().Name.Should().Be("Mp3Unit");
@@ -77,10 +80,10 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenCalledForCdAnMultipleAlbummsCdIsInserte_ThenMultipleAlbummsUnitIsReturned()
         {
             // arrange
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.MultipleAlbumms);
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.MultipleAlbumms);
 
             // act
-            IAudioUnit result = _sut.GetActiveUnit("cd", null);
+            IAudioUnit result = _sut.GetActiveUnit("cd", null, _cancellationToken);
 
             // assert
             result.GetType().Name.Should().Be("MultipleAlbummsUnit");
@@ -90,11 +93,11 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenUnitChanges_ThenKillIsCalled()
         {
             // arrange
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Returns(MediumType.MultipleAlbumms);
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.MultipleAlbumms);
             Mock<IAudioUnit> audioUnitMock = new Mock<IAudioUnit>();
 
             // act
-            IAudioUnit result = _sut.GetActiveUnit("cd", audioUnitMock.Object);
+            IAudioUnit result = _sut.GetActiveUnit("cd", audioUnitMock.Object, _cancellationToken);
 
             // assert
             audioUnitMock.Verify(m => m.Kill(), Times.Once);
@@ -104,7 +107,7 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenCalledForNone_ThenNullIsReturned()
         {
             // act
-            IAudioUnit result = _sut.GetActiveUnit("none", null);
+            IAudioUnit result = _sut.GetActiveUnit("none", null, _cancellationToken);
 
             // assert
             result.Should().BeNull();
@@ -114,7 +117,7 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetDefaultUnit_WhenCalled_ThenRadioUnitIsReturned()
         {
             // arrange
-            _sut.GetActiveUnit("none", null);
+            _sut.GetActiveUnit("none", null, _cancellationToken);
 
             // act
             IAudioUnit result = _sut.GetDefaultUnit();
@@ -127,7 +130,7 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenCalledForCdAndThenForRadio_ThenRadioIsReturnedWithoutBlocking()
         {
             // arrage
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType()).Callback(() => Thread.SpinWait(5000));
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Callback(() => Thread.Sleep(5000));
             Mock<IAudioUnit> audioUnitMock = new Mock<IAudioUnit>();
 
             List<Thread> threads = new List<Thread>();
@@ -137,11 +140,11 @@ namespace PeKaRaSa.MusicControl.Test
             {
                 // make shure "radio" is called after "cd"
                 Thread.Sleep(2);
-                result = _sut.GetActiveUnit("radio", audioUnitMock.Object);
+                result = _sut.GetActiveUnit("radio", audioUnitMock.Object, _cancellationToken);
             }));
-            threads.Add(new Thread(() => result = _sut.GetActiveUnit("cd", audioUnitMock.Object)));
-            threads.Add(new Thread(() => result = _sut.GetActiveUnit("radio", audioUnitMock.Object)));
-            threads.Add(new Thread(() => result = _sut.GetActiveUnit("cd", audioUnitMock.Object)));
+            threads.Add(new Thread(() => result = _sut.GetActiveUnit("cd", audioUnitMock.Object, _cancellationToken)));
+            threads.Add(new Thread(() => result = _sut.GetActiveUnit("radio", audioUnitMock.Object, _cancellationToken)));
+            threads.Add(new Thread(() => result = _sut.GetActiveUnit("cd", audioUnitMock.Object, _cancellationToken)));
 
             // act
             Stopwatch timer = new Stopwatch();

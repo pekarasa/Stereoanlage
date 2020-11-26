@@ -1,4 +1,6 @@
-﻿namespace PeKaRaSa.MusicControl.Services
+﻿using System.Threading;
+
+namespace PeKaRaSa.MusicControl.Services
 {
     /// <summary>
     /// Simplifies the handling of optical data media
@@ -9,6 +11,6 @@
         /// Determines the type of the inserted media
         /// </summary>
         /// <returns>the type of the inserted medium</returns>
-        MediumType GetInsertedDiscType();
+        MediumType GetInsertedDiscType(CancellationToken token);
     }
 }

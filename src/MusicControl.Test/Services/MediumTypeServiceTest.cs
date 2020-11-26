@@ -3,22 +3,27 @@ using Moq;
 using NUnit.Framework;
 using PeKaRaSa.MusicControl.Services;
 using System.Configuration;
+using System.Threading;
 
 namespace PeKaRaSa.MusicControl.Test.Services
 {
     public class MediumTypeServiceTest
     {
         private IMediumTypeService _sut;
+        private CancellationToken _cancellationToken;
         private Mock<IOpticalDiscService> _opticalDiscService;
 
         [SetUp]
         public void Setup()
         {
-            _opticalDiscService = new Mock<IOpticalDiscService>();
-            _sut = new MediumTypeService(_opticalDiscService.Object);
-
             ConfigurationManager.AppSettings["MillisecondsToSleepWhenDriveIsNotReady"] = "0";
             ConfigurationManager.AppSettings["MillisecondsToSleepWhenDriveIsOpen"] = "0";
+
+            CancellationTokenSource cts = new CancellationTokenSource();
+            _cancellationToken = cts.Token;
+
+            _opticalDiscService = new Mock<IOpticalDiscService>();
+            _sut = new MediumTypeService(_opticalDiscService.Object);
         }
 
         [Test]
@@ -28,7 +33,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("Disc found in drive: audio disc");
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType();
+            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
             resul.Should().Be(MediumType.AudioCd);
@@ -41,7 +46,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("mixed type CD (data/audio)");
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType();
+            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
             resul.Should().Be(MediumType.AudioCd);
@@ -55,7 +60,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.Setup(m => m.FindFile("AUDIO_TS")).Returns(true);
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType();
+            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
             _opticalDiscService.Verify(m => m.Unmount());
@@ -72,7 +77,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.Setup(m => m.FindFile("MultipleAlbums.md")).Returns(true);
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType();
+            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
             _opticalDiscService.Verify(m => m.Unmount());
@@ -89,7 +94,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.Setup(m => m.FindFile("MultipleAlbums.md")).Returns(false);
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType();
+            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
             _opticalDiscService.Verify(m => m.Unmount());
