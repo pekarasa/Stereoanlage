@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using System;
 using System.Configuration;
@@ -19,6 +20,7 @@ namespace PeKaRaSa.MusicControl.Test
         }
 
         [Test]
+        [DeploymentItem(@"setcd.dummy")]
         public void WhenSendChangeUnitCdAndCdIsNotInsertedAndThenChangeUnitRadio_ThenActiveUnitShouldBeRadio()
         {
             try
@@ -35,11 +37,10 @@ namespace PeKaRaSa.MusicControl.Test
 
                     // act
                     Send("changeUnit cd");
-                    Thread.Sleep(400);
+                    Thread.Sleep(2000);
                     Send("changeUnit radio");
                     Thread.Sleep(1000);
                     Send("poweroff");
-                    Thread.Sleep(3000);
                     Send("shutdown");
                     process.WaitForExit();
 
@@ -48,11 +49,14 @@ namespace PeKaRaSa.MusicControl.Test
                     Console.Out.Write(output);
                     output.Should().Contain("new unit 'RadioUnit'");
                     output.Should().NotContain("current unit 'AudioCdUnit'");
+                    output.Should().Contain("unchanged unit 'RadioUnit'");
+                    output.Should().Contain("send poweroff to unit 'RadioUnit'");
+                    
                 }
             }
             catch (Exception e)
             {
-                Assert.Fail(e.Message);
+                Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Fail(e.Message);
             }
         }
 

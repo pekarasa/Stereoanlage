@@ -25,7 +25,7 @@ namespace PeKaRaSa.MusicControl.Services
                 {
                     string info = _opticalDiscService.GetInfo();
 
-                    if (info.Contains("no disc inserted", StringComparison.OrdinalIgnoreCase))
+                    if (info.Contains("no disc", StringComparison.OrdinalIgnoreCase))
                     {
                         Thread.Sleep(_millisecondsToSleepWhenDriveIsNotReady);
                     }
@@ -59,14 +59,15 @@ namespace PeKaRaSa.MusicControl.Services
                         }
                         return MediumType.Mp3;
                     }
-                    if (token.IsCancellationRequested)
-                    {
-                        return MediumType.None;
-                    }
                 }
                 catch 
                 {
                     return MediumType.None;
+                }
+
+                if (token.IsCancellationRequested)
+                {
+                    token.ThrowIfCancellationRequested();
                 }
             }
         }

@@ -23,4 +23,10 @@
     <ProjectReference Include="..\VlcDummy\VlcDummy.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="setcd.dummy">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

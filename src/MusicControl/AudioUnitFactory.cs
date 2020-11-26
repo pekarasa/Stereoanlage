@@ -20,7 +20,7 @@ namespace PeKaRaSa.MusicControl
             _audioCd = new AudioCdUnit(new VlcMediaPlayer());
         }
 
-        public IAudioUnit GetActiveUnit(string unitToActivate, IAudioUnit currentUnit, CancellationToken token)
+        public IAudioUnit GetActiveUnit(string unitToActivate, IAudioUnit currentUnit, CancellationToken? token)
         {
             IAudioUnit newUnit;
             switch (unitToActivate)
@@ -30,7 +30,7 @@ namespace PeKaRaSa.MusicControl
                     break;
                 case "cd":
                     MediumType type = MediumType.None;
-                    type = _mediumTypeService.GetInsertedDiscType(token);
+                    type = _mediumTypeService.GetInsertedDiscType((CancellationToken)token);
                     newUnit = type switch
                     {
                         MediumType.AudioCd => _audioCd,

@@ -12,12 +12,12 @@ namespace PeKaRaSa.MusicControl
     {
         private readonly IAudioUnitFactory _factory;
         private IAudioUnit _activeUnit;
-        private Dictionary<string, CancellationTokenSource> _startedTasks;
+        private CancellationTokenSource _cdUnitTokenSource;
 
         public CommandExecutor(IAudioUnitFactory factory)
         {
             _factory = factory;
-            _startedTasks = new Dictionary<string, CancellationTokenSource>();
+            _cdUnitTokenSource = null;
             _activeUnit = _factory.GetDefaultUnit();
         }
 
@@ -41,39 +41,39 @@ namespace PeKaRaSa.MusicControl
                 Log.WriteLine($"current unit '{_activeUnit?.GetType().Name}'");
                 string unitToActivate = arguments.Last();
 
-                lock (_startedTasks)
+                lock (_factory)
                 {
-
-                    // Checks that no task is running for the audio unit to be activated or that it has already been cancelled
-                    if (!_startedTasks.TryGetValue(unitToActivate, out CancellationTokenSource task) || task.IsCancellationRequested)
+                    // Should a unit other than the CD unit be activated?
+                    if (unitToActivate != "cd")
                     {
-                        if (task != null)
+                        _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, _cdUnitTokenSource?.Token);
+                        Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
+                        if (_cdUnitTokenSource != null)
                         {
-                            // remove cancelled task
-                            _startedTasks.Remove(unitToActivate);
+                            _cdUnitTokenSource.Cancel();
+                            _cdUnitTokenSource = null;
                         }
-
-                        // Tasks which are already running for other audio units will be aborted
-                        foreach (KeyValuePair<string, CancellationTokenSource> taskToStop in _startedTasks)
-                        {
-                            taskToStop.Value.Cancel();
-                        }
-
-                        // a new task is started
-                        CancellationTokenSource tokenSource = new CancellationTokenSource();
-                        CancellationToken token = tokenSource.Token;
-                        _startedTasks.Add(unitToActivate, tokenSource);
+                    }
+                    // Is the cd activation already running and not cancelled?
+                    else if (_cdUnitTokenSource != null && !_cdUnitTokenSource.IsCancellationRequested)
+                    {
+                        Log.WriteLine("CD Unit activation already running");
+                    }
+                    else 
+                    {
+                        _cdUnitTokenSource = new CancellationTokenSource();
+                        CancellationToken token = _cdUnitTokenSource.Token;
 
                         Task.Factory.StartNew(() =>
                         {
                             _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, token);
                             Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
-                            _startedTasks.Remove(_activeUnit?.GetType().Name);
+                            _cdUnitTokenSource = null;
                         }, token).ContinueWith((t) =>
                         {
-                        // _activeUnit must be unchanged
-                        Log.WriteLine($"unchanged unit '{_activeUnit?.GetType().Name}'");
-                            _startedTasks.Remove(_activeUnit?.GetType().Name);
+                            // _activeUnit must be unchanged
+                            Log.WriteLine($"unchanged unit '{_activeUnit?.GetType().Name}'");
+                            _cdUnitTokenSource = null;
                         }, TaskContinuationOptions.OnlyOnCanceled);
                     }
                 }
