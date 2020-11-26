@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using PeKaRaSa.MusicControl.Services;
+using System;
 using System.Configuration;
 using System.Threading;
 
@@ -30,13 +31,13 @@ namespace PeKaRaSa.MusicControl.Test.Services
         public void GetType_WhenAudioCdIsInserted_ThenReturnAudioCd()
         {
             // arrange
-            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("Disc found in drive: audio disc");
+            _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("No disc is inserted").Returns("CD tray is open").Returns("Drive is not ready").Returns("Disc found in drive: audio disc");
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
+            MediumType result = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
-            resul.Should().Be(MediumType.AudioCd);
+            result.Should().Be(MediumType.AudioCd);
         }
 
         [Test]
@@ -46,10 +47,10 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("mixed type CD (data/audio)");
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
+            MediumType result = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
-            resul.Should().Be(MediumType.AudioCd);
+            result.Should().Be(MediumType.AudioCd);
         }
 
         [Test]
@@ -60,16 +61,16 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.Setup(m => m.FindFile("AUDIO_TS")).Returns(true);
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
+            MediumType result = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
             _opticalDiscService.Verify(m => m.Unmount());
             _opticalDiscService.Verify(m => m.Mount());
-            resul.Should().Be(MediumType.Dvd);
+            result.Should().Be(MediumType.Dvd);
         }
 
         [Test]
-        public void GetType_WhenMMultipleAlbumsDiscIsInserted_ThenReturnDvd()
+        public void GetType_WhenMultipleAlbumsDiscIsInserted_ThenReturnDvd()
         {
             // arrange
             _opticalDiscService.SetupSequence(m => m.GetInfo()).Returns("CD tray is open").Returns("Drive is not ready").Returns("data disc type 1");
@@ -77,12 +78,12 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.Setup(m => m.FindFile("MultipleAlbums.md")).Returns(true);
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
+            MediumType result = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
             _opticalDiscService.Verify(m => m.Unmount());
             _opticalDiscService.Verify(m => m.Mount());
-            resul.Should().Be(MediumType.MultipleAlbumms);
+            result.Should().Be(MediumType.MultipleAlbumms);
         }
 
         [Test]
@@ -94,12 +95,40 @@ namespace PeKaRaSa.MusicControl.Test.Services
             _opticalDiscService.Setup(m => m.FindFile("MultipleAlbums.md")).Returns(false);
 
             // act
-            MediumType resul = _sut.GetInsertedDiscType(_cancellationToken);
+            MediumType result = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
             _opticalDiscService.Verify(m => m.Unmount());
             _opticalDiscService.Verify(m => m.Mount());
-            resul.Should().Be(MediumType.Mp3);
+            result.Should().Be(MediumType.Mp3);
+        }
+
+        [Test]
+        public void GetType_WhenAnExceptionOccurs_ThenReturnNone()
+        {
+            // arrange
+            _opticalDiscService.Setup(m => m.GetInfo()).Callback(() => { throw new Exception(); });
+
+            // act
+            MediumType result = _sut.GetInsertedDiscType(_cancellationToken);
+
+            // assert
+            result.Should().Be(MediumType.None);
+        }
+
+        [Test]
+        public void GetType_WhenCanceled_ThenRaiseOperationCanceledException()
+        {
+            // arrange
+            _opticalDiscService.Setup(m => m.GetInfo()).Returns("CD tray is open");
+            CancellationTokenSource cts = new CancellationTokenSource();
+            cts.Cancel();
+
+            // act
+            Action action = () => _sut.GetInsertedDiscType(cts.Token);
+
+            // assert
+            action.Should().ThrowExactly<OperationCanceledException>();
         }
     }
 }

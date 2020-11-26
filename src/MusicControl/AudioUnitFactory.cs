@@ -20,7 +20,7 @@ namespace PeKaRaSa.MusicControl
             _audioCd = new AudioCdUnit(new VlcMediaPlayer());
         }
 
-        public IAudioUnit GetActiveUnit(string unitToActivate, IAudioUnit currentUnit, CancellationToken? token)
+        public IAudioUnit GetActiveUnit(string unitToActivate, IAudioUnit currentUnit, CancellationToken token)
         {
             IAudioUnit newUnit;
             switch (unitToActivate)

@@ -43,10 +43,13 @@ namespace PeKaRaSa.MusicControl
 
                 lock (_factory)
                 {
+                    _cdUnitTokenSource = new CancellationTokenSource();
+                    CancellationToken token = _cdUnitTokenSource.Token;
+
                     // Should a unit other than the CD unit be activated?
                     if (unitToActivate != "cd")
                     {
-                        _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, _cdUnitTokenSource?.Token);
+                        _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, token);
                         Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
                         if (_cdUnitTokenSource != null)
                         {
@@ -61,9 +64,6 @@ namespace PeKaRaSa.MusicControl
                     }
                     else 
                     {
-                        _cdUnitTokenSource = new CancellationTokenSource();
-                        CancellationToken token = _cdUnitTokenSource.Token;
-
                         Task.Factory.StartNew(() =>
                         {
                             _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, token);

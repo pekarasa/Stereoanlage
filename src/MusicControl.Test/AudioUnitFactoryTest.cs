@@ -127,7 +127,7 @@ namespace PeKaRaSa.MusicControl.Test
         }
 
         [Test]
-        public void GetActiveUnit_WhenCalledForCdAndThenForRadio_ThenRadioIsReturnedWithoutBlocking()
+        public void GetActiveUnit_WhenTheFirstThreadSwitchesToCdAndTheSecondThreadSwitchesToRadio_ThenCdIsCanceledAndRadioIsReturnedWithoutBlocking()
         {
             // arrage
             _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Callback(() => Thread.Sleep(5000));
@@ -142,8 +142,6 @@ namespace PeKaRaSa.MusicControl.Test
                 Thread.Sleep(2);
                 result = _sut.GetActiveUnit("radio", audioUnitMock.Object, _cancellationToken);
             }));
-            threads.Add(new Thread(() => result = _sut.GetActiveUnit("cd", audioUnitMock.Object, _cancellationToken)));
-            threads.Add(new Thread(() => result = _sut.GetActiveUnit("radio", audioUnitMock.Object, _cancellationToken)));
             threads.Add(new Thread(() => result = _sut.GetActiveUnit("cd", audioUnitMock.Object, _cancellationToken)));
 
             // act
