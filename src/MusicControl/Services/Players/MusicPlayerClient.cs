@@ -14,7 +14,7 @@ namespace PeKaRaSa.MusicControl.Services.Players
     {
         public void Send(string command)
         {
-            Console.WriteLine("\t\t\t\t***\tmpc {0}", command);
+            Log.WriteLine("\t\t\t\t***\tmpc {0}", command);
 
             try
             {
@@ -29,7 +29,7 @@ namespace PeKaRaSa.MusicControl.Services.Players
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Exception during mpc: {e.Message}");
+                Log.WriteLine($"Exception during mpc: {e.Message}");
             }
         }
     }

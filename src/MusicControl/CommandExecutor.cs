@@ -1,4 +1,5 @@
-﻿using PeKaRaSa.MusicControl.Units;
+﻿using PeKaRaSa.MusicControl.Services;
+using PeKaRaSa.MusicControl.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace PeKaRaSa.MusicControl
         {
             if (!arguments?.Any() ?? true)
             {
-                Console.WriteLine("No command can be executed without arguments.");
+                Log.WriteLine("No command can be executed without arguments.");
                 return;
             }
 
@@ -33,10 +34,10 @@ namespace PeKaRaSa.MusicControl
             // Check whether a new component should be activated
             if ("changeUnit".Equals(command, StringComparison.CurrentCultureIgnoreCase))
             {
-                Console.WriteLine($"current unit '{_activeUnit?.GetType().Name}'");
+                Log.WriteLine($"current unit '{_activeUnit?.GetType().Name}'");
                 string unitToActivate = arguments.Last();
                 _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit);
-                Console.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
+                Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
                 return;
             }
 
@@ -52,7 +53,7 @@ namespace PeKaRaSa.MusicControl
         {
             string command = arguments.First();
 
-            Console.WriteLine($"send {command} to unit '{_activeUnit?.GetType().Name}'");
+            Log.WriteLine($"send {command} to unit '{_activeUnit?.GetType().Name}'");
 
             switch (command)
             {
@@ -87,8 +88,8 @@ namespace PeKaRaSa.MusicControl
                             _activeUnit.Previous();
                             break;
                         default:
-                            Console.WriteLine("rewind {0} unknown", arguments.Skip(1).First());
-                            Console.WriteLine("Maybe you meant 'rewind fastforward' or 'rewind rewind' or 'rewind next' or 'rewind previous'");
+                            Log.WriteLine("rewind {0} unknown", arguments.Skip(1).First());
+                            Log.WriteLine("Maybe you meant 'rewind fastforward' or 'rewind rewind' or 'rewind next' or 'rewind previous'");
                             break;
                     }
                     break;
@@ -105,8 +106,8 @@ namespace PeKaRaSa.MusicControl
                             _activeUnit.Stop();
                             break;
                         default:
-                            Console.WriteLine("control {0} unknown", arguments.Skip(1).First());
-                            Console.WriteLine("Maybe you meant 'control play' or 'control pause' or 'control stop'");
+                            Log.WriteLine("control {0} unknown", arguments.Skip(1).First());
+                            Log.WriteLine("Maybe you meant 'control play' or 'control pause' or 'control stop'");
                             break;
                     }
                     break;
@@ -123,8 +124,8 @@ namespace PeKaRaSa.MusicControl
                             _activeUnit.VolumeMute();
                             break;
                         default:
-                            Console.WriteLine("volume {0} unknown", arguments.Skip(1).First());
-                            Console.WriteLine("Maybe you meant 'volume up' or 'volume down' or 'volume mute'");
+                            Log.WriteLine("volume {0} unknown", arguments.Skip(1).First());
+                            Log.WriteLine("Maybe you meant 'volume up' or 'volume down' or 'volume mute'");
                             break;
                     }
                     break;
@@ -138,28 +139,28 @@ namespace PeKaRaSa.MusicControl
                             _activeUnit.ChannelDown();
                             break;
                         default:
-                            Console.WriteLine("channel {0} unknown", arguments.Skip(1).First());
-                            Console.WriteLine("Maybe you meant 'channel up' or 'channel down'");
+                            Log.WriteLine("channel {0} unknown", arguments.Skip(1).First());
+                            Log.WriteLine("Maybe you meant 'channel up' or 'channel down'");
                             break;
                     }
                     break;
                 default:
-                    Console.WriteLine("'{0}' is unknown command", command);
+                    Log.WriteLine("'{0}' is unknown command", command);
                     if (new List<string> { "up", "down" }.Contains(command))
                     {
-                        Console.WriteLine("Maybe you meant 'volume up' or 'volume down'");
+                        Log.WriteLine("Maybe you meant 'volume up' or 'volume down'");
                     }
                     else if (new List<string> { "play", "pause", "stop" }.Contains(command))
                     {
-                        Console.WriteLine("Maybe you meant 'control play' or 'control pause' or 'control stop'");
+                        Log.WriteLine("Maybe you meant 'control play' or 'control pause' or 'control stop'");
                     }
                     else if (new List<string> { "fastforward", "rewind", "next", "previous" }.Contains(command))
                     {
-                        Console.WriteLine("Maybe you meant 'rewind fastforward' or 'rewind rewind' or 'rewind next' or 'rewind previous'");
+                        Log.WriteLine("Maybe you meant 'rewind fastforward' or 'rewind rewind' or 'rewind next' or 'rewind previous'");
                     }
                     else
                     {
-                        Console.WriteLine("Try one of these commands: 'poweroff', 'track', 'disc', 'record', 'eject', 'rewind fastforward | rewind | next | previous', 'control play | pause | stop', 'volume up | down | mute', 'channel up | down'");
+                        Log.WriteLine("Try one of these commands: 'poweroff', 'track', 'disc', 'record', 'eject', 'rewind fastforward | rewind | next | previous', 'control play | pause | stop', 'volume up | down | mute', 'channel up | down'");
                     }
 
                     break;

@@ -1,4 +1,5 @@
-﻿using PeKaRaSa.MusicControl.Services.Players;
+﻿using PeKaRaSa.MusicControl.Services;
+using PeKaRaSa.MusicControl.Services.Players;
 using System;
 using System.Diagnostics;
 
@@ -69,7 +70,7 @@ namespace PeKaRaSa.MusicControl.Units
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Exception during {fileName}: {e.Message}");
+                Log.WriteLine($"Exception during {fileName}: {e.Message}");
             }
         }
 

@@ -41,12 +41,12 @@ public class Program
             // Enter the listening loop.
             while (isServerRunning)
             {
-                Console.Write("Waiting for a connection... ");
+                Log.Write("Waiting for a connection... ");
 
                 // Perform a blocking call to accept requests.
                 // You could also use server.AcceptSocket() here.
                 TcpClient client = server.AcceptTcpClient();
-                Console.WriteLine("Connected!");
+                Log.WriteLine("Connected!");
 
                 data = null;
 
@@ -54,7 +54,7 @@ public class Program
                 {
                     int i = stream.Read(bytes, 0, bytes.Length);
                     data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                    Console.WriteLine(data);
+                    Log.WriteLine(data);
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
                     stream.Write(msg, 0, msg.Length);
                     client.Close();
@@ -77,7 +77,7 @@ public class Program
         }
         catch (SocketException e)
         {
-            Console.WriteLine("SocketException: {0}", e);
+            Log.WriteLine("SocketException: {0}", e.Message);
         }
         finally
         {

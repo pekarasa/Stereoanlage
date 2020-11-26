@@ -40,10 +40,10 @@ namespace PeKaRaSa.MusicControl.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Exception during setcd: {e.Message}");
+                Log.WriteLine($"Exception during setcd: {e.Message}");
             }
 
-            Console.WriteLine(output);
+            Log.WriteLine(output);
             return output;
         }
 
@@ -62,7 +62,7 @@ namespace PeKaRaSa.MusicControl.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Exception during mount: {e.Message}");
+                Log.WriteLine($"Exception during mount: {e.Message}");
             }
         }
 
@@ -81,7 +81,7 @@ namespace PeKaRaSa.MusicControl.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Exception during umount: { e.Message}");
+                Log.WriteLine($"Exception during umount: { e.Message}");
             }
         }
     }

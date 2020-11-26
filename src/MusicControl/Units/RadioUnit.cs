@@ -57,7 +57,7 @@ namespace PeKaRaSa.MusicControl.Units
         {
             if (!int.TryParse(position, out int index))
             {
-                Console.WriteLine("track number '{0}' is not a valid integer", position);
+                Log.WriteLine("track number '{0}' is not a valid integer", position);
                 return;
             }
 
