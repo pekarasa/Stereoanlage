@@ -4,6 +4,8 @@ I run a compact music center consisting of a Raspberry Pi and an AMP2 as audio a
 
 The aim of this guide is to help you set up the software for your music center as quickly as possible.
 
+[![Build Status](https://dev.azure.com/pekarasa/Stereoanlage/_apis/build/status/pekarasa.Stereoanlage?branchName=master)](https://dev.azure.com/pekarasa/Stereoanlage/_build/latest?definitionId=2&branchName=master)
+
 ## Playable media
 
 Currently the music center can play the following media:
