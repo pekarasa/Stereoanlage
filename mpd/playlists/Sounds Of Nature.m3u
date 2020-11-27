@@ -1,0 +1,24 @@
+#EXTM3U
+#RADIOBROWSERUUID:96429528-0601-11e8-ae97-52543be04c81
+#EXTINF:1,Birdsong.fm
+https://streaming.radio.co/s5c5da6a36/listen
+
+#RADIOBROWSERUUID:962f9e5b-0601-11e8-ae97-52543be04c81
+#EXTINF:1,Digital Impulse - Ambient Nature Sounds
+http://orion.shoutca.st:8157/stream
+
+#RADIOBROWSERUUID:4d75fd5a-4b50-11ea-b877-52543be04c81
+#EXTINF:1,Klassik Radio
+http://stream.klassikradio.de/nature/mp3-128
+
+#RADIOBROWSERUUID:961e8943-0601-11e8-ae97-52543be04c81
+#EXTINF:1,Netiraadio - Eesti loodus
+http://www.netiraadio.ee:8000/eestiloodus
+
+#RADIOBROWSERUUID:435425d6-8c65-11e9-ad01-52543be04c81
+#EXTINF:1,Polskie Radio LAS
+http://mp3.polskieradio.pl:8128/
+
+#RADIOBROWSERUUID:9febcbf6-990d-4c98-9645-58707b092945
+#EXTINF:1,Radio Dreamland
+https://dreamsiteradiocp3.com/proxy/dreamland?mp=/stream
