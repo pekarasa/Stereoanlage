@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace PeKaRaSa.MusicControl.Units
+﻿namespace PeKaRaSa.MusicControl.Units
 {
     /// <summary>
     /// Interface that each audio unit must offer

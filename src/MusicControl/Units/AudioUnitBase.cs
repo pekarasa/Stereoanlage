@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace PeKaRaSa.MusicControl.Units
+﻿namespace PeKaRaSa.MusicControl.Units
 {
     public abstract class AudioUnitBase : IAudioUnit
     {
