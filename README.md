@@ -6,6 +6,8 @@ The aim of this guide is to help you set up the software for your music center a
 
 [![Build Status](https://dev.azure.com/pekarasa/Stereoanlage/_apis/build/status/pekarasa.Stereoanlage?branchName=master)](https://dev.azure.com/pekarasa/Stereoanlage/_build/latest?definitionId=2&branchName=master)
 
+[![Build Status](https://dev.azure.com/pekarasa/Stereoanlage/_apis/build/status/pekarasa.Stereoanlage?branchName=master)](https://dev.azure.com/pekarasa/Stereoanlage/_build/latest?definitionId=1&branchName=master)
+
 ## Playable media
 
 Currently the music center can play the following media:
