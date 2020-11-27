@@ -51,7 +51,7 @@ namespace PeKaRaSa.MusicControl.Test
         }
 
         [Test]
-        public void GetActiveUnit_WhenCalledForCdAnDvdIsInserte_ThenDvdUnitIsReturned()
+        public void GetActiveUnit_WhenCalledForCdAndDvdIsInserte_ThenDvdUnitIsReturned()
         {
             // arrange
             _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.Dvd);
