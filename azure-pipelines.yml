@@ -18,7 +18,7 @@ steps:
   inputs:
     version: '5.0.x'
     includePreviewVersions: true
-    packageType: runtime
+    packageType: sdk
 
 - task: DotNetCoreCLI@2
   inputs:
