@@ -51,6 +51,7 @@ namespace PeKaRaSa.MusicControl.Test
         }
 
         [Test]
+        [NUnit.Framework.Ignore("DVD is not implemented yet")]
         public void GetActiveUnit_WhenCalledForCdAndDvdIsInserte_ThenDvdUnitIsReturned()
         {
             // arrange
@@ -64,6 +65,7 @@ namespace PeKaRaSa.MusicControl.Test
         }
 
         [Test]
+        [NUnit.Framework.Ignore("Mp3 is not implemented yet")]
         public void GetActiveUnit_WhenCalledForCdAnMp3CdIsInserte_ThenMp3UnitIsReturned()
         {
             // arrange
@@ -77,6 +79,7 @@ namespace PeKaRaSa.MusicControl.Test
         }
 
         [Test]
+        [NUnit.Framework.Ignore("Multiple Albumms CD is not implemented yet")]
         public void GetActiveUnit_WhenCalledForCdAnMultipleAlbummsCdIsInserte_ThenMultipleAlbummsUnitIsReturned()
         {
             // arrange
