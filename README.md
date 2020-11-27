@@ -41,6 +41,7 @@ In this project I have collected the knowledge from different sources. Namely th
 - [15] [Easy Setup IR Remote Control Using LIRC for the Raspberry PI (RPi) - July 2019](https://www.instructables.com/id/Setup-IR-Remote-Control-Using-LIRC-for-the-Raspber/)
 - [16] [Raspberry Pi Audio Receiver](https://github.com/nicokaiser/rpi-audio-receiver)
 - [17] [Irrecord Button Listing](https://www.ocinside.de/modding_en/linux_ir_irrecord_list/)
+- [18] [Install and use Microsoft Dot NET 5 with the Raspberry Pi](https://www.petecodes.co.uk/install-and-use-microsoft-dot-net-5-with-the-raspberry-pi/)
 
 ## Setup of the infrared remote control VLR-RC001
 
@@ -190,6 +191,12 @@ Reboot and check, if the sound card is enabled with "aplay":
 sudo reboot
 ssh pi@MusixOne
 aplay -l
+```
+
+## Install and use Microsoft Dot NET 5
+
+```bash
+wget -O - https://raw.githubusercontent.com/pjgpetecodes/dotnet5pi/master/install.sh | sudo bash
 ```
 
 ## Synchronize and deploy the software
