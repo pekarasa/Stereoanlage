@@ -1,0 +1,21 @@
+[Unit]
+Description=MusicControl which receives commands via port 13000 and controls the individual components of the music control.
+
+[Service]
+# systemd will run this executable to start the service
+ExecStart=/srv/MusicControl/MusicControl
+# to query logs using journalctl, set a logical name here
+SyslogIdentifier=MusicControl
+
+# Use your username to keep things simple.
+# If you pick a different user, make sure dotnet and all permissions are set correctly to run the app
+# To update permissions, use 'chown yourusername -R /srv/MusicControl' to take ownership of the folder and files,
+#       Use 'chmod +x /srv/MusicControl/MusicControl' to allow execution of the executable file
+User=pi
+
+# This environment variable is necessary when dotnet isn't loaded for the specified user.
+# To figure out this value, run 'env | grep DOTNET_ROOT' when dotnet has been loaded into your shell.
+Environment=DOTNET_ROOT=/usr/local/bin/dotnet
+
+[Install]
+WantedBy=multi-user.target
