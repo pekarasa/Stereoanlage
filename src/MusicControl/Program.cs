@@ -41,7 +41,7 @@ public class Program
             // Enter the listening loop.
             while (isServerRunning)
             {
-                Log.Write("Waiting for a connection... ");
+                Log.Write($"Waiting for a connection on port {port} ... ");
 
                 // Perform a blocking call to accept requests.
                 // You could also use server.AcceptSocket() here.
