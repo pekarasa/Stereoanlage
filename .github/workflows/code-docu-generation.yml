@@ -1,5 +1,8 @@
-name: C# Documentation Generator
-on: [push]
+name: C#DocumentationGenerator
+
+on:
+  push:
+    branches: [ master ]
 
 jobs:
   code-docu-generation:
