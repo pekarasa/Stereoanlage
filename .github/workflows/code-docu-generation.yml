@@ -1,2 +1,9 @@
-name: code-docu-generation-actions
+name: C# Documentation Generator
 on: [push]
+
+jobs:
+  code-docu-generation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: C# Documentation Generator
+        uses: FuLagann/csharp-docs-generator@master
