@@ -26,6 +26,7 @@ namespace PeKaRaSa.MusicControl.Units
 
         public override void Start()
         {
+            _mpc.Send($"volume {_volume}");
             Play();
         }
 
@@ -89,7 +90,7 @@ namespace PeKaRaSa.MusicControl.Units
             _volume += 3;
             _volume = _volume > 100 ? 100 : _volume;
 
-            _mpc.Send("volume {_volume}");
+            _mpc.Send($"volume {_volume}");
         }
     }
 }
