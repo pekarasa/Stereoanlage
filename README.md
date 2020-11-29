@@ -42,6 +42,7 @@ In this project I have collected the knowledge from different sources. Namely th
 - [16] [Raspberry Pi Audio Receiver](https://github.com/nicokaiser/rpi-audio-receiver)
 - [17] [Irrecord Button Listing](https://www.ocinside.de/modding_en/linux_ir_irrecord_list/)
 - [18] [Install and use Microsoft Dot NET 5 with the Raspberry Pi](https://www.petecodes.co.uk/install-and-use-microsoft-dot-net-5-with-the-raspberry-pi/)
+- [19] [Bluetooth, BlueALSA and Buster](https://sigmdel.ca/michel/ha/rpi/bluetooth_n_buster_01_en.html)
 
 ## Setup of the infrared remote control VLR-RC001
 
@@ -246,6 +247,60 @@ audio_output {
 
 Reboot with `sudo reboot` to get the mpd working.
 Scan music directory for updates: `mpc update`
+
+## Bluetooth
+
+```bash
+sudo apt install bluealsa
+sudo nano /lib/systemd/system/bluealsa.service
+
+[Unit]
+Description=BluezALSA proxy
+Requires=bluetooth.service
+After=bluetooth.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/bluealsa -p a2dp-source -p a2dp-sink
+
+sudo adduser pi bluetooth
+
+sudo nano /lib/systemd/system/bluetooth.service
+
+[Unit]
+Description=Bluetooth service
+Documentation=man:bluetoothd(8)
+ConditionPathIsDirectory=/sys/class/bluetooth
+
+[Service]
+Type=dbus
+BusName=org.bluez
+ExecStart=/usr/lib/bluetooth/bluetoothd --noplugin=sap
+NotifyAccess=main
+#WatchdogSec=10
+#Restart=on-failure
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+LimitNPROC=1
+ProtectHome=true
+ProtectSystem=full
+
+[Install]
+WantedBy=bluetooth.target
+Alias=dbus-org.bluez.service
+
+sudo reboot
+sudo systemctl status blue*
+sudo systemctl restart bluetooth.service
+sudo systemctl status bluetooth.service
+
+crontab -e
+...
+#For more information see the manual pages of crontab(5) and cron(8)
+#
+# m h  dom mon dow   command
+@reboot sleep 5 && sudo systemctl restart bluetooth.service
+```
 
 ## Bluetooth, AirPlay, Spotify Connect, UPnP and Snapcast
 
