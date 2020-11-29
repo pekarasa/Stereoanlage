@@ -1,5 +1,6 @@
 exclude-from-rsync
 DokuIntern/
+src/
 *.pdf
 *.odt
 .git
