@@ -49,9 +49,11 @@ namespace PeKaRaSa.MusicControl.Units
 
         public override void Start()
         {
-            StartProcess("cvlc", "- I rc--rc - host localhost: 12345--volume - step 6 cdda://");
-            _mpc.Send("volume 70");
-            Track("1");
+            int port = AppSettings.GetInt32OrDefault("vlcPort", 13001);
+
+            StartProcess("cvlc", $"-I oldrc --rc-host localhost:{port} cdda://");
+            _mpc.Send("volume 40");
+            Play();
         }
 
         private void StartProcess(string fileName, string arguments)
