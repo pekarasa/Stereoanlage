@@ -198,6 +198,9 @@ aplay -l
 ```bash
 wget -O - https://raw.githubusercontent.com/pjgpetecodes/dotnet5pi/master/install.sh | sudo bash
 ```
+export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+
+dotnet publish MusicControl -c Release -o ../srv/MusicControl -r linux-arm -p:PublishSingleFile=false --self-contained true
 
 ## Synchronize and deploy the software
 
@@ -247,11 +250,11 @@ Scan music directory for updates: `mpc update`
 ## Bluetooth, AirPlay, Spotify Connect, UPnP and Snapcast
 
 ```bash
-wget -q https://github.com/nicokaiser/rpi-audio-receiver/archive/master.zip
-unzip master.zip
-rm master.zip
+wget -q https://github.com/nicokaiser/rpi-audio-receiver/archive/main.zip
+unzip main.zip
+rm main.zip
 
-cd rpi-audio-receiver-master
+cd rpi-audio-receiver-main
 ./install.sh
 ```
 
