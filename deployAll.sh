@@ -6,3 +6,6 @@ sudo cp /home/pi/irexec.init.d /etc/init.d/irexec
 sudo chmod 755 /etc/init.d/irexec
 sudo chmod 755 /home/pi/control/musicCenter.sh
 sudo cp -R /home/pi/srv/MusicControl /srv
+sudo cp MusicControl.service /etc/systemd/system/MusicControl.service
+sudo chmod 755 /etc/systemd/system/MusicControl.service
+sudo cp /home/pi/control/irexec.conf /etc/lirc/irexec.lircrc

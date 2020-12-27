@@ -42,7 +42,11 @@ In this project I have collected the knowledge from different sources. Namely th
 - [16] [Raspberry Pi Audio Receiver](https://github.com/nicokaiser/rpi-audio-receiver)
 - [17] [Irrecord Button Listing](https://www.ocinside.de/modding_en/linux_ir_irrecord_list/)
 - [18] [Install and use Microsoft Dot NET 5 with the Raspberry Pi](https://www.petecodes.co.uk/install-and-use-microsoft-dot-net-5-with-the-raspberry-pi/)
-- [19] [Bluetooth, BlueALSA and Buster](https://sigmdel.ca/michel/ha/rpi/bluetooth_n_buster_01_en.html)
+- [19] [.NET Core-RID-Katalog](https://docs.microsoft.com/de-de/dotnet/core/rid-catalog)
+- [20] [Permanently Setting System-Wide PATH for all Users](https://stackabuse.com/how-to-permanently-set-path-in-linux/)
+- [21] [,Net Core Manual install](https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#manual-install)
+- [22] [Download .NET 5.](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [] []()
 
 ## Setup of the infrared remote control VLR-RC001
 
@@ -59,21 +63,45 @@ As audio card and amplifier I use the hifiberry AMP2. See [[14]](https://www.hif
 
 ## Setup Raspberry Pi
 
-1. Download [Raspbian Stretch Lite](ttps://downloads.raspberrypi.org/raspbian_lite_latest)
-1. Bring the image to the sd card. (UNOOBS) [[3]](ttps://www.raspberrypi.org/documentation/installation/installing-images/README.md)
-1. Make an offline installation
+## Install Raspberry Pi OS using Raspberry Pi Imager
+
+1. Download and install rpi-imager from [Raspberry Pi](https://www.raspberrypi.org/software/)-site.
+1. Bring the image to the sd card
 1. Enable SSH to make ssh work after booting: `touch '/run/media/pp/rootfs/boot/ssh'`
 1. Boot and connect with `ssh pi@raspberrypi`. The default passowrd is `raspberry`.
+
+## Bluetooth, AirPlay, Spotify Connect, UPnP and Snapcast
+
+```bash
+wget -q https://github.com/nicokaiser/rpi-audio-receiver/archive/main.zip
+unzip main.zip
+rm main.zip
+
+cd rpi-audio-receiver-main
+./install.sh
+```
+
+Answer all installation questions with Yes except the following:
+
+1. Hostname: **MusixOne**
+1. Pretty hostname: **MusixOne**
+1. Do you want to install Startup sound? **N**
+1. Do you want to install ALSA VU meter plugin (pivumeter) **N**
+
+Restart the system (`sudo reboot`) and try to detect the bluetooth device named MusixOne.
+
+## Install Raspberry Pi OS using Raspberry Pi Imager
+
 1. Change following settings with `sudo raspi-config`
     - Password: [new password]
     - Localization Options
       - Change Local: de_CH.UTF-8 UTF-8
-    - Network Options
-      - Hostname: `MusixOne`
     - Advanced Options
       - Expand Filesystem
-    - Update
 1. Reboot with `sudo reboot`
+
+
+Bevor wir die erstellte SD-Karte in den Raspberry Pi einsetzen und booten, müssen wir noch folgenes tun:
 
 ## Development computer
 
@@ -85,50 +113,13 @@ The public key is then placed on the Rapsbbery Pi.
 
 ### Place public key on Raspberry Pi
 
-Create the subdirectory `.ssh` in the home directory and copy the public key into it.
+Copy the public key to the Raspberry Pi.
 
-```bash
-ssh pi@MusixOne mkdir -p .ssh
-cat .ssh/id_rsa.pub | ssh pi@MusixOne 'cat >> .ssh/authorized_keys'
-```
+`cat .ssh/id_rsa.pub | ssh pi@MusicTwo 'cat >> .ssh/authorized_keys'`
 
 ## Setting up LIRC on the Raspberry Pi
 
-Connect to the Raspberry Pi and install `lirc`.
-
-```bash
-ssh pi@MusixOne
-sudo apt-get install lirc
-```
-
-*DON'T WORRY! as this will likely raise an error "Failed to start Flexible IR remote input/output application support" as the .dist suffix needs to be deleted from lirc_options.conf. Just rename the file as shown.*
-
-```bash
-sudo mv /etc/lirc/lirc_options.conf.dist /etc/lirc/lirc_options.conf
-```
-
-Reinstall lirc now that the lirc_options.conf file has been renamed: `sudo apt-get install lirc`
-
-Edit `sudo nano /etc/lirc/lirc_options.conf` as follows by changing these two lines:
-
-```bash
-:
-driver = default
-device = /dev/lirc0
-:
-```
-
-Remove suffix `.dist` from `/etc/lirc/lircd.conf.dist`
-
-```bash
-sudo mv /etc/lirc/lircd.conf.dist /etc/lirc/lircd.conf
-```
-
-Your remote configuration file(s) will be placed in the /etc/lirc/lircd.conf.d directory. LIRC will find any file in this directory as long as it has a .conf extension (ie: JVC.lircd.conf). We will not be using the devinput.lircd.conf file so we will hide it by changing the extension as follows by renaming devinput.lircd.conf to devinput.lircd.conf.notUsed
-
-```bash
-sudo mv /etc/lirc/lircd.conf.d/devinput.lircd.conf /etc/lirc/lircd.conf.d/devinput.lircd.conf.notUse
-```
+Connecg to the Raspberry Pi with `ssh pi@MusicTwo`
 
 Edit `sudo nano /boot/config.txt` by uncommenting one line in the lirc-rpi module section as follows. Be careful change the pin to 22 too.
 
@@ -138,6 +129,22 @@ Edit `sudo nano /boot/config.txt` by uncommenting one line in the lirc-rpi modul
 dtoverlay=gpio-ir,gpio_pin=22
 #dtoverlay=gpio-ir-tx, gpio_pin=18
 :
+```
+
+Install `lirc` with `sudo apt-get install lirc`
+
+Edit `sudo nano /etc/lirc/lirc_options.conf` as follows by changing these two lines:
+
+```bash
+:
+driver          = default
+device          = /dev/lirc0
+:
+```
+Your remote configuration file(s) will be placed in the /etc/lirc/lircd.conf.d directory. LIRC will find any file in this directory as long as it has a .conf extension (ie: JVC.lircd.conf). We will not be using the devinput.lircd.conf file so we will hide it by changing the extension as follows by renaming devinput.lircd.conf to devinput.lircd.conf.notUsed
+
+```bash
+sudo mv /etc/lirc/lircd.conf.d/devinput.lircd.conf /etc/lirc/lircd.conf.d/devinput.lircd.conf.notUse
 ```
 
 Stop, start and check status of lircd to ensure there are no errors!
@@ -152,12 +159,12 @@ sudo reboot
 ### Optional: Test lirc
 
 1. `ls -l /dev/lir*`
-1. `sudo service lircd stop`
+1. `sudo systemctl stop lircd.service`
 1. `mode2 -d /dev/lirc0`
 1. Press any keys on the IR control. Various lines appear on the screen.
 
-1. `sudo service lircd start`
-1. `irw`
+1. `sudo systemctl start lircd.service`
+1. `irw` -> TODO: Hier muss zuerst die neue Config der IR kopiert werden
 1. Press any keys on the IR control. The commands appear on the screen.
 
 ### Optional: Record codes of the remote control yourself with
@@ -182,41 +189,61 @@ Edit `sudo nano /boot/config.txt` and comment / add the following lines at the e
 dtoverlay=hifiberry-dacplus
 
 # Disable wlan to avoid bluetooth interference
-dtoverlay=pi3-disable-wifi
+#dtoverlay=pi3-disable-wifi
 :
 ```
 
-Reboot and check, if the sound card is enabled with "aplay":
+Check if the sound card is enabled with "aplay":
 
 ```bash
+#sudo apt install alsa-utils
 sudo reboot
-ssh pi@MusixOne
+ssh pi@MusicTwo
 aplay -l
 ```
 
 ## Install and use Microsoft Dot NET 5
 
-```bash
-wget -O - https://raw.githubusercontent.com/pjgpetecodes/dotnet5pi/master/install.sh | sudo bash
-```
-export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+We determine for which architecture we have to install .NET with `dpkg --print-architecture`.
+The output is `arm64`.
 
-dotnet publish MusicControl -c Release -o ../srv/MusicControl -r linux-arm -p:PublishSingleFile=false --self-contained true
+As .NET Core is installed manually, we have to make sure that these libraries are installed: `sudo apt install libc6 libgcc1 libgssapi-krb5-2 libicu63 libssl1.1 libstdc++6 zlib1g`
+
+So we install the [ASP.NET Core 5.0 Runtime (v5.0.0) - Linux Arm32 Binaries](https://download.visualstudio.microsoft.com/download/pr/1c5366e8-9b74-4017-96ae-47fc08832c22/504aed87590bd99c49d053bc6f980b6b/aspnetcore-runtime-5.0.0-linux-arm.tar.gz), because it includes both .NET and ASP.NET core runtimes.
+
+Therefore we download aaspnetcore-runtime-5.0.0-linux-arm.tar.gz and extract this file to `/opt/dotnet`.
+
+```bash
+sudo mkdir -p "/opt/dotnet" 
+wget https://download.visualstudio.microsoft.com/download/pr/1c5366e8-9b74-4017-96ae-47fc08832c22/504aed87590bd99c49d053bc6f980b6b/aspnetcore-runtime-5.0.0-linux-arm.tar.gz
+sudo tar zxf aspnetcore-runtime-5.0.0-linux-arm.tar.gz -C "/opt/dotnet"
+```
+
+To make dotnet available for all users we have to set the path. We do this by entering the following line with `sudo nano /etc/profile.d/env.sh`:
+
+```bash
+# makes dotnet accessible for all
+export DOTNET_ROOT=/opt/dotnet
+export PATH=$PATH:/opt/dotnet
+#export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+```
+Restart with `sudo reboot`
+
+Kompilieren mit:
+`dotnet publish MusicControl -c Release -o ../srv/MusicControl -r linux-arm64 -p:PublishSingleFile=false --self-contained true`
 
 ## Synchronize and deploy the software
 
 ```bash
 exit
-rsync -avz -e "ssh" --exclude-from=/home/pp/Dokumente/Coding/Stereoanlage/exclude-from-rsync  /home/pp/Dokumente/Coding/Stereoanlage/ pi@MusixOne:/home/pi/
+rsync -avz -e "ssh" --exclude-from=/home/pp/Dokumente/Coding/Stereoanlage/exclude-from-rsync  /home/pp/Dokumente/Coding/Stereoanlage/ pi@MusicTwo:/home/pi/
 
-ssh pi@MusixOne 'sudo chmod 755 deployAll.sh'
-ssh pi@MusixOne './deployAll.sh'
-ssh pi@MusixOne
+ssh pi@MusicTwo 'sudo chmod 755 deployAll.sh'
+ssh pi@MusicTwo './deployAll.sh'
+ssh pi@MusicTwo
 ```
 
-1. Start service: `sudo /etc/init.d/irexec start`
-
-1. Register script to be run at startup. Edit `sudo nano /etc/rc.local` and add line `/etc/init.d/irexec start` before `exit 0`
+Use systemctl command to start the service on boot: `sudo systemctl enable --now irexec`
 
 ## Installing Music Player Daemon, setcd and VideoLAN
 
@@ -246,78 +273,4 @@ audio_output {
 ```
 
 Reboot with `sudo reboot` to get the mpd working.
-Scan music directory for updates: `mpc update`
-
-## Bluetooth
-
-```bash
-sudo apt install bluealsa
-sudo nano /lib/systemd/system/bluealsa.service
-
-[Unit]
-Description=BluezALSA proxy
-Requires=bluetooth.service
-After=bluetooth.service
-
-[Service]
-Type=simple
-User=root
-ExecStart=/usr/bin/bluealsa -p a2dp-source -p a2dp-sink
-
-sudo adduser pi bluetooth
-
-sudo nano /lib/systemd/system/bluetooth.service
-
-[Unit]
-Description=Bluetooth service
-Documentation=man:bluetoothd(8)
-ConditionPathIsDirectory=/sys/class/bluetooth
-
-[Service]
-Type=dbus
-BusName=org.bluez
-ExecStart=/usr/lib/bluetooth/bluetoothd --noplugin=sap
-NotifyAccess=main
-#WatchdogSec=10
-#Restart=on-failure
-CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-LimitNPROC=1
-ProtectHome=true
-ProtectSystem=full
-
-[Install]
-WantedBy=bluetooth.target
-Alias=dbus-org.bluez.service
-
-sudo reboot
-sudo systemctl status blue*
-sudo systemctl restart bluetooth.service
-sudo systemctl status bluetooth.service
-
-crontab -e
-...
-#For more information see the manual pages of crontab(5) and cron(8)
-#
-# m h  dom mon dow   command
-@reboot sleep 5 && sudo systemctl restart bluetooth.service
-```
-
-## Bluetooth, AirPlay, Spotify Connect, UPnP and Snapcast
-
-```bash
-wget -q https://github.com/nicokaiser/rpi-audio-receiver/archive/main.zip
-unzip main.zip
-rm main.zip
-
-cd rpi-audio-receiver-main
-./install.sh
-```
-
-Answer all installation questions with Yes except the following:
-
-1. Hostname: **MusixOne**
-1. Pretty hostname: **MusixOne**
-1. Do you want to install Startup sound? **N**
-1. Do you want to install ALSA VU meter plugin (pivumeter) **N**
-
-Restart the system and try to detect the bluetooth device named MusixOne.
+Scan music directory for updates: `mpc update` and set start volume with `mpc volume 8`

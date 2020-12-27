@@ -8,7 +8,7 @@ namespace PeKaRaSa.MusicControl
         {
             try
             {
-                return ConfigurationManagerWrapper.AppSettings(name);
+                return ConfigurationManagerWrapper.AppSettings(name)?? defaultValue;
             }
             catch
             {
@@ -20,7 +20,7 @@ namespace PeKaRaSa.MusicControl
         {
             try
             {
-                return Int32.Parse(ConfigurationManagerWrapper.AppSettings(name));
+                return Int32.Parse(GetValueOrDefault(name, defaultValue.ToString()));
             }
             catch
             {
