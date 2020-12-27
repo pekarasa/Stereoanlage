@@ -10,7 +10,7 @@ namespace PeKaRaSa.MusicControl.Units
     {
         private readonly IMusicPlayerClient _mpc;
         private readonly IPlaylistService _playlistService;
-        private int _volume = 30;
+        private int _volume = 9;
         private bool _muted = false;
 
         public RadioUnit(IMusicPlayerClient mpc, IPlaylistService playlistService)
