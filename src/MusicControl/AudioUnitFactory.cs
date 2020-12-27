@@ -47,10 +47,13 @@ namespace PeKaRaSa.MusicControl
             // when switching to a new unit, the old unit is deactivated and the new unit is started
             if (newUnit != null && currentUnit != newUnit)
             {
+                Log.WriteLine($"{currentUnit}.Kill()");
                 currentUnit?.Kill();
+                Log.WriteLine($"{newUnit}.Start()");
                 newUnit?.Start();
             }
 
+            Log.WriteLine($"return newUnit: {newUnit}");
             return newUnit;
         }
 

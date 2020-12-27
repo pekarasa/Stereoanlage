@@ -2,6 +2,7 @@
 using PeKaRaSa.MusicControl.Services.Players;
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace PeKaRaSa.MusicControl.Units
 {
@@ -51,8 +52,11 @@ namespace PeKaRaSa.MusicControl.Units
         {
             int port = AppSettings.GetInt32OrDefault("vlcPort", 13001);
 
+            Log.WriteLine($"StartProcess(\"cvlc\", $\"-I oldrc --rc-host localhost:{port} cdda://");
             StartProcess("cvlc", $"-I oldrc --rc-host localhost:{port} cdda://");
-            _mpc.Send("volume 40");
+            Log.WriteLine($"Set initial volume to 30 on {_mpc}");
+            Thread.Sleep(2000);
+            _mpc.Send("volume 60");
             Play();
         }
 
@@ -60,15 +64,7 @@ namespace PeKaRaSa.MusicControl.Units
         {
             try
             {
-                using (Process process = new Process())
-                {
-                    process.StartInfo.UseShellExecute = true;
-                    process.StartInfo.FileName = fileName;
-                    process.StartInfo.Arguments = arguments;
-                    process.StartInfo.CreateNoWindow = true;
-                    process.StartInfo.RedirectStandardOutput = false;
-                    process.Start();
-                }
+                Process.Start(fileName, arguments);
             }
             catch (Exception e)
             {

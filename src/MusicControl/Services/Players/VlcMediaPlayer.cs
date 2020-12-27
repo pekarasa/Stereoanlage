@@ -20,6 +20,7 @@ namespace PeKaRaSa.MusicControl.Services.Players
 
         public void Send(string command)
         {
+            Log.WriteLine($"VlcMediaPlayer localhost:{_port}: Send({command})");
             using var tcpClient = new TcpClient("localhost", _port);
             using var stream = tcpClient.GetStream();
 
@@ -28,6 +29,7 @@ namespace PeKaRaSa.MusicControl.Services.Players
 
             stream.Close();
             tcpClient.Close();
+            Log.WriteLine($"VlcMediaPlayer localhost:{_port}: Send({command}) done");
         }
     }
 }
