@@ -11,6 +11,7 @@ srv
 *.suo
 *.user
 *.sln.docstates
+.vscode
 
 # Build results
 [Dd]ebug/
