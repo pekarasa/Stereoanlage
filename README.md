@@ -46,7 +46,6 @@ In this project I have collected the knowledge from different sources. Namely th
 - [20] [Permanently Setting System-Wide PATH for all Users](https://stackabuse.com/how-to-permanently-set-path-in-linux/)
 - [21] [,Net Core Manual install](https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#manual-install)
 - [22] [Download .NET 5.](https://dotnet.microsoft.com/download/dotnet/5.0)
-- [] []()
 
 ## Setup of the infrared remote control VLR-RC001
 
@@ -90,7 +89,7 @@ Answer all installation questions with Yes except the following:
 
 Restart the system (`sudo reboot`) and try to detect the bluetooth device named MusixOne.
 
-## Install Raspberry Pi OS using Raspberry Pi Imager
+## Set Localization
 
 1. Change following settings with `sudo raspi-config`
     - Password: [new password]
@@ -99,7 +98,6 @@ Restart the system (`sudo reboot`) and try to detect the bluetooth device named 
     - Advanced Options
       - Expand Filesystem
 1. Reboot with `sudo reboot`
-
 
 Bevor wir die erstellte SD-Karte in den Raspberry Pi einsetzen und booten, müssen wir noch folgenes tun:
 
@@ -141,6 +139,7 @@ driver          = default
 device          = /dev/lirc0
 :
 ```
+
 Your remote configuration file(s) will be placed in the /etc/lirc/lircd.conf.d directory. LIRC will find any file in this directory as long as it has a .conf extension (ie: JVC.lircd.conf). We will not be using the devinput.lircd.conf file so we will hide it by changing the extension as follows by renaming devinput.lircd.conf to devinput.lircd.conf.notUsed
 
 ```bash
@@ -227,6 +226,7 @@ export DOTNET_ROOT=/opt/dotnet
 export PATH=$PATH:/opt/dotnet
 #export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 ```
+
 Restart with `sudo reboot`
 
 Kompilieren mit:
