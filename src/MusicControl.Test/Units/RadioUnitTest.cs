@@ -53,7 +53,7 @@ namespace PeKaRaSa.MusicControl.Test.Units
             _sut.VolumeMute();
             _mpc.Verify(m => m.Send($"volume 0"));
             _sut.VolumeMute();
-            _mpc.Verify(m => m.Send($"volume 30"));
+            _mpc.Verify(m => m.Send($"volume 9"));
             _sut.VolumeMute();
             _mpc.Verify(m => m.Send($"volume 0"));
         }
