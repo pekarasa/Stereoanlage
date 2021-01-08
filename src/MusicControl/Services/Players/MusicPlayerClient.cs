@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace PeKaRaSa.MusicControl.Services.Players
 {
@@ -25,6 +26,7 @@ namespace PeKaRaSa.MusicControl.Services.Players
                     process.StartInfo.Arguments = command;
                     process.StartInfo.CreateNoWindow = true;
                     process.Start();
+                    Thread.Sleep(100);
                 }
             }
             catch (Exception e)
