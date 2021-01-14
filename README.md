@@ -1,10 +1,28 @@
 # Stereoanlage
 
-I run a compact music center consisting of a Raspberry Pi and an AMP2 as audio amplifier. Additionally there is a button to start the system. The music center is operated with an infrared remote control.
+I am operating a compact music centre consisting of a Raspberry Pi and an AMP2 as an audio amplifier. The system is started with a button and an infrared remote control is used to operate it.
 
 The aim of this guide is to help you set up the software for your music center as quickly as possible.
 
 [![Build Status](https://dev.azure.com/pekarasa/Stereoanlage/_apis/build/status/pekarasa.Stereoanlage?branchName=master)](https://dev.azure.com/pekarasa/Stereoanlage/_build/latest?definitionId=2&branchName=master)
+
+The Music Player Deamon (mpd) plays all kinds of streams. For example, the radio
+stations from the Internet, but also the mp3 tracks from data CDs.
+
+With audio CDs, however, things are different. An audio CD is not a data CD and
+does not actually contain files but only a stream. Similar to an LP, which can
+be played.
+
+Unfortunately, the mpd does not support audio CDs properly. This means that it
+plays audio CDs only with interruptions. This is actually not due to the mpd but
+to the poor quality of the CD drives.
+
+At the moment, the audio CD is played with vlc. I am not satisfied with this
+solution because vlc has dependencies on X11 and because I cannot manage to
+start vlc from C# service.
+
+Therefore, I decided to rip the audio CDs and save them as flac files on the SD
+card. They are then loaded as a playlist and played with mpd. The ripped files are retained, and if the same audio CD is to be played again, the already ripped data is used.
 
 ## Playable media
 
