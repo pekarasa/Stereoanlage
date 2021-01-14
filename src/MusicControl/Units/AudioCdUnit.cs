@@ -1,6 +1,8 @@
 ﻿using PeKaRaSa.MusicControl.Services;
 using PeKaRaSa.MusicControl.Services.Players;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
@@ -11,40 +13,40 @@ namespace PeKaRaSa.MusicControl.Units
     /// </summary>
     public class AudioCdUnit : AudioUnitBase
     {
-        private readonly IMusicPlayerClient _mpc;
-
-        //private bool _muted = false;
-        
         public AudioCdUnit(IMusicPlayerClient mpc)
         {
-            _mpc = mpc;
+            VolumeDefault = 150;
+            VolumeIncrement = 15;
+            VolumeMaximum = 300;
+            VolumeMinimum = 0;
+            Mpc = mpc;
         }
 
         public override void FastForward()
         {
-            _mpc.Send("fastforward");
+            Mpc.Send("fastforward");
         }
 
         public override void Rewind()
         {
-            _mpc.Send("rewind");
+            Mpc.Send("rewind");
         }
 
         public override void Next()
         {
-            _mpc.Send("next");
+            Mpc.Send("next");
         }
 
         public override void Previous()
         {
-            _mpc.Send("previous");
+            Mpc.Send("previous");
         }
 
 
         public override void Kill()
         {
             Stop();
-            _mpc.Send("shutdown");
+            Mpc.Send("shutdown");
             StartProcess("kill", "$(sudo ps aux | grep 'vlc' | awk '{print $2}')");
         }
 
@@ -53,18 +55,28 @@ namespace PeKaRaSa.MusicControl.Units
             int port = AppSettings.GetInt32OrDefault("vlcPort", 13001);
 
             Log.WriteLine($"StartProcess(\"cvlc\", $\"-I oldrc --rc-host localhost:{port} cdda://");
-            StartProcess("cvlc", $"-I oldrc --rc-host localhost:{port} cdda://");
-            Log.WriteLine($"Set initial volume to 30 on {_mpc}");
+            //StartProcess("cvlc", $"-I oldrc --rc-host localhost:{port} cdda://");
             Thread.Sleep(2000);
-            _mpc.Send("volume 60");
-            Play();
+            Mpc.Send($"volume {VolumeDefault}");
         }
 
         private void StartProcess(string fileName, string arguments)
         {
             try
             {
-                Process.Start(fileName, arguments);
+                using (Process process = new Process())
+                {
+                    process.StartInfo.UseShellExecute = true;
+                    process.StartInfo.FileName = fileName;
+                    process.StartInfo.Arguments = arguments;
+                    process.StartInfo.CreateNoWindow = true;
+                    foreach(DictionaryEntry a in process.StartInfo.EnvironmentVariables)
+                    {
+                        Log.WriteLine($"Process {a.Key}: '{a.Value}'");
+                    }
+                    process.Start();
+                }
+                Thread.Sleep(500);
             }
             catch (Exception e)
             {
@@ -74,12 +86,12 @@ namespace PeKaRaSa.MusicControl.Units
 
         public override void Pause()
         {
-            _mpc.Send("pause");
+            Mpc.Send("pause");
         }
 
         public override void Play()
         {
-            _mpc.Send("play");
+            Mpc.Send("play");
         }
 
         public override void PowerOff()
@@ -101,29 +113,12 @@ namespace PeKaRaSa.MusicControl.Units
 
         public override void Stop()
         {
-            _mpc.Send("stop");
+            Mpc.Send("stop");
         }
 
         public override void Track(string position)
         {
-            _mpc.Send($"goto {position}");
-        }
-
-        public override void VolumeDown()
-        {
-            _mpc.Send("voldown");
-        }
-
-        public override void VolumeMute()
-        {
-            _mpc.Send("volume 0");
-            //_mpc.Send($"volume {(_muted ? _volume : 0)}");
-            //_muted = !_muted;
-        }
-
-        public override void VolumeUp()
-        {
-            _mpc.Send("volup");
+            Mpc.Send($"goto {position}");
         }
     }
 }

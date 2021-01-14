@@ -69,9 +69,15 @@ namespace PeKaRaSa.MusicControl
 
                         Task.Factory.StartNew(() =>
                         {
-                            _activeUnit = _factory.GetActiveUnit(cdUnit, _activeUnit, token);
-                            Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
-                            _cdUnitTokenSource = null;
+                            try
+                            {
+                                _activeUnit = _factory.GetActiveUnit(cdUnit, _activeUnit, token);
+                                Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
+                            }
+                            finally
+                            {
+                                _cdUnitTokenSource = null;
+                            }
                         }, token).ContinueWith((t) =>
                         {
                             // _activeUnit must be unchanged

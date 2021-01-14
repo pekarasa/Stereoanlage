@@ -8,49 +8,50 @@ namespace PeKaRaSa.MusicControl.Units
     /// </summary>
     public class RadioUnit : AudioUnitBase
     {
-        private readonly IMusicPlayerClient _mpc;
         private readonly IPlaylistService _playlistService;
-        private int _volume = 9;
-        private bool _muted = false;
 
         public RadioUnit(IMusicPlayerClient mpc, IPlaylistService playlistService)
         {
-            _mpc = mpc;
+            VolumeDefault = 9;
+            VolumeIncrement = 3;
+            VolumeMaximum = 100;
+            VolumeMinimum = 0;
+            Mpc = mpc;
             _playlistService = playlistService;
         }
 
         public override void Kill()
         {
-            _mpc.Send("stop");
+            Mpc.Send("stop");
         }
 
         public override void Start()
         {
-            _mpc.Send($"volume {_volume}");
+            Mpc.Send($"volume {VolumeDefault}");
             Play();
         }
 
         public override void Pause()
         {
-            _mpc.Send("pause");
+            Mpc.Send("pause");
         }
 
         public override void Play()
         {
-            _mpc.Send("play");
+            Mpc.Send("play");
         }
 
         public override void PowerOff()
         {
-            _mpc.Send("stop");
-            _mpc.Send("volume 30");
+            Mpc.Send("stop");
+            Mpc.Send($"volume {VolumeDefault}");
         }
 
         public override void Record() { }
 
         public override void Stop()
         {
-            _mpc.Send("stop");
+            Mpc.Send("stop");
         }
 
         public override void Track(string position)
@@ -65,32 +66,10 @@ namespace PeKaRaSa.MusicControl.Units
 
             if (playlist != null)
             {
-                _mpc.Send("clear");
-                _mpc.Send($"load \"{playlist}\"");
-                _mpc.Send("play");
+                Mpc.Send("clear");
+                Mpc.Send($"load \"{playlist}\"");
+                Mpc.Send("play");
             }
-        }
-
-        public override void VolumeDown()
-        {
-            _volume -= 3;
-            _volume = _volume < 0 ? 0 : _volume;
-
-            _mpc.Send($"volume {_volume}");
-        }
-
-        public override void VolumeMute()
-        {
-            _mpc.Send($"volume {(_muted ? _volume : 0)}");
-            _muted = !_muted;
-        }
-
-        public override void VolumeUp()
-        {
-            _volume += 3;
-            _volume = _volume > 100 ? 100 : _volume;
-
-            _mpc.Send($"volume {_volume}");
         }
     }
 }

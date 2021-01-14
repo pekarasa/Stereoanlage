@@ -1,7 +1,16 @@
-﻿namespace PeKaRaSa.MusicControl.Units
+﻿using PeKaRaSa.MusicControl.Services.Players;
+
+namespace PeKaRaSa.MusicControl.Units
 {
     public abstract class AudioUnitBase : IAudioUnit
     {
+        protected int VolumeDefault { get; set; }
+        protected int VolumeIncrement { get; set; }
+        protected int VolumeMaximum { get; set; }
+        protected int VolumeMinimum { get; set; }
+        protected bool IsMuted { get; set; } = false;
+        protected IMusicPlayerClient Mpc { get; set; }
+
         public abstract void Kill();
         
         public abstract void Start();
@@ -23,17 +32,33 @@
         /// <summary>
         /// Increases the volume
         /// </summary>
-        public abstract void VolumeUp();
+        public virtual void VolumeUp()
+        {
+            VolumeDefault += VolumeIncrement;
+            VolumeDefault = VolumeDefault > VolumeMaximum ? VolumeMaximum : VolumeDefault;
+
+            Mpc.Send($"volume {VolumeDefault}");
+        }
 
         /// <summary>
         /// Decreases the volume
         /// </summary>
-        public abstract void VolumeDown();
+        public virtual void VolumeDown()
+        {
+            VolumeDefault -= VolumeIncrement;
+            VolumeDefault = VolumeDefault < VolumeMinimum ? VolumeMinimum : VolumeDefault;
+
+            Mpc.Send($"volume {VolumeDefault}");
+        }
 
         /// <summary>
         /// Mute
         /// </summary>
-        public abstract void VolumeMute();
+        public virtual void VolumeMute()
+        {
+            Mpc.Send($"volume {(IsMuted ? VolumeDefault : 0)}");
+            IsMuted = !IsMuted;
+        }
 
         /// <summary>
         /// Plays the selected track
