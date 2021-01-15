@@ -7,11 +7,11 @@ namespace PeKaRaSa.MusicControl.Services
     /// </summary>
     public static class Log
     {
-        public static void Write(string format, params string[] arg)
+        public static void Write(string format, params object[] arg)
         {
             Console.Write(format, arg);
         }
-        public static void WriteLine(string format, params string[] arg)
+        public static void WriteLine(string format, params object[] arg)
         {
             Console.WriteLine(format, arg);
         }

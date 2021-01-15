@@ -83,7 +83,7 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenCalledForCdAnMultipleAlbummsCdIsInserte_ThenMultipleAlbummsUnitIsReturned()
         {
             // arrange
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.MultipleAlbumms);
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.MultipleAlbums);
 
             // act
             IAudioUnit result = _sut.GetActiveUnit("cd", null, _cancellationToken);
@@ -96,7 +96,7 @@ namespace PeKaRaSa.MusicControl.Test
         public void GetActiveUnit_WhenUnitChanges_ThenKillIsCalled()
         {
             // arrange
-            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.MultipleAlbumms);
+            _mediumTypeService.Setup(m => m.GetInsertedDiscType(It.IsAny<CancellationToken>())).Returns(MediumType.MultipleAlbums);
             Mock<IAudioUnit> audioUnitMock = new Mock<IAudioUnit>();
 
             // act

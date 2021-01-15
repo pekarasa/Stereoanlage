@@ -1,7 +1,7 @@
 ﻿namespace PeKaRaSa.MusicControl.Services
 {
     /// <summary>
-    /// Service to deal with the playlists
+    /// Service to deal with the play lists
     /// </summary>
     public interface IPlaylistService
     {

@@ -66,7 +66,7 @@ namespace PeKaRaSa.MusicControl.Test.Units
 
             // assert
             _mpc.Verify(m => m.Send("stop"));
-            _mpc.Verify(m => m.Send("volume 30"));
+            _mpc.Verify(m => m.Send("volume 9"));
         }
     }
 }

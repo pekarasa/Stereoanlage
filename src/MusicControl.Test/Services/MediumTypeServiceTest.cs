@@ -64,7 +64,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
             MediumType result = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
-            _opticalDiscService.Verify(m => m.Unmount());
+            _opticalDiscService.Verify(m => m.UnMount());
             _opticalDiscService.Verify(m => m.Mount());
             result.Should().Be(MediumType.Dvd);
         }
@@ -81,9 +81,9 @@ namespace PeKaRaSa.MusicControl.Test.Services
             MediumType result = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
-            _opticalDiscService.Verify(m => m.Unmount());
+            _opticalDiscService.Verify(m => m.UnMount());
             _opticalDiscService.Verify(m => m.Mount());
-            result.Should().Be(MediumType.MultipleAlbumms);
+            result.Should().Be(MediumType.MultipleAlbums);
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace PeKaRaSa.MusicControl.Test.Services
             MediumType result = _sut.GetInsertedDiscType(_cancellationToken);
 
             // assert
-            _opticalDiscService.Verify(m => m.Unmount());
+            _opticalDiscService.Verify(m => m.UnMount());
             _opticalDiscService.Verify(m => m.Mount());
             result.Should().Be(MediumType.Mp3);
         }

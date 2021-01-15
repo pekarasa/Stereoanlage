@@ -28,14 +28,13 @@ namespace PeKaRaSa.MusicControl.Services
             {
                 return null;
             }
-            else if (index > sortedPlaylistNames.Count())
+
+            if (index > sortedPlaylistNames.Count())
             {
                 return null;
             }
-            else
-            {
-                fileName = sortedPlaylistNames[index - 1];
-            }
+
+            fileName = sortedPlaylistNames[index - 1];
 
             return Path.GetFileNameWithoutExtension(fileName);
         }

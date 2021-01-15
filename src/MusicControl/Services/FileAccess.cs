@@ -6,7 +6,7 @@ namespace PeKaRaSa.MusicControl.Services
 {
     public class FileAccess : IFileAccess
     {
-        readonly DirectoryInfo _directoryInfo;
+        private readonly DirectoryInfo _directoryInfo;
 
         public FileAccess(string playlistPath)
         {

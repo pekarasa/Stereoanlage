@@ -39,7 +39,7 @@ namespace PeKaRaSa.MusicControl.Test
         public void Command_WhenNoArgumentsAreGiven_ThenNoCommandIsExecutedOnAudioUnit()
         {
             // act
-            _sut.Command(new List<string>());
+            _sut.Command(Array.Empty<string>());
 
             // assert
             _factoryMock.Verify(m => m.GetDefaultUnit(), Times.Once);
@@ -85,7 +85,7 @@ namespace PeKaRaSa.MusicControl.Test
             factoryMock.Setup(m => m.GetDefaultUnit()).Returns(radio);
 
             factoryMock.Setup(m => m.GetActiveUnit("cd", It.IsAny<IAudioUnit>(), It.IsAny<CancellationToken>()))
-                .Callback((string unitToActivate, IAudioUnit u, CancellationToken token) =>
+                .Callback((string unitToActivate, IAudioUnit _, CancellationToken token) =>
             {
                 Thread.Sleep(2000);
                 // assert
@@ -100,15 +100,16 @@ namespace PeKaRaSa.MusicControl.Test
 
             string[] cdArguments = "changeUnit cd".Split(' ');
             string[] radioArguments = "changeUnit radio".Split(' ');
-            List<Thread> threads = new List<Thread>();
-
-            threads.Add(new Thread(() =>
+            var threads = new List<Thread>
             {
-                // make shure "radio" is called after "cd"
+                new Thread(() =>
+                {
+                // make sure "radio" is called after "cd"
                 Thread.Sleep(50);
-                sut.Command(radioArguments); ;
-            }));
-            threads.Add(new Thread(() => sut.Command(cdArguments)));
+                    sut.Command(radioArguments);
+                }),
+                new Thread(() => sut.Command(cdArguments))
+            };
 
             // act
             threads.ForEach(t => t.Start());

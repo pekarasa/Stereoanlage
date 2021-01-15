@@ -29,20 +29,20 @@ namespace PeKaRaSa.MusicControl
                     newUnit = _radio;
                     break;
                 case "cd":
-                    MediumType type = MediumType.None;
-                    type = _mediumTypeService.GetInsertedDiscType((CancellationToken)token);
+                    MediumType type;
+                    type = _mediumTypeService.GetInsertedDiscType(token);
                     newUnit = type switch
                     {
                         MediumType.AudioCd => _audioCd,
                         MediumType.Dvd => _radio,
                         MediumType.Mp3 => _radio,
-                        MediumType.MultipleAlbumms => _radio,
+                        MediumType.MultipleAlbums => _radio,
                         _ => null,
                     };
                     break;
                 default:
                     return null; // echo "$ActiveUnit: 1: unknown ActiveUnit" >> $musicCenterLog ;;
-            };
+            }
 
             // when switching to a new unit, the old unit is deactivated and the new unit is started
             if (newUnit != null && currentUnit != newUnit)
@@ -50,7 +50,7 @@ namespace PeKaRaSa.MusicControl
                 Log.WriteLine($"{currentUnit}.Kill()");
                 currentUnit?.Kill();
                 Log.WriteLine($"{newUnit}.Start()");
-                newUnit?.Start();
+                newUnit.Start();
             }
 
             Log.WriteLine($"return newUnit: {newUnit}");

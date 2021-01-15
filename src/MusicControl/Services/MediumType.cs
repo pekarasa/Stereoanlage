@@ -6,6 +6,6 @@
         AudioCd,
         Dvd,
         Mp3,
-        MultipleAlbumms
+        MultipleAlbums
     }
 }

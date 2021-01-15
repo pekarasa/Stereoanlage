@@ -6,8 +6,8 @@ namespace PeKaRaSa.MusicControl.Services
     public class MediumTypeService : IMediumTypeService
     {
         private readonly IOpticalDiscService _opticalDiscService;
-        private int _millisecondsToSleepWhenDriveIsNotReady;
-        private int _millisecondsToSleepWhenDriveIsOpen;
+        private readonly int _millisecondsToSleepWhenDriveIsNotReady;
+        private readonly int _millisecondsToSleepWhenDriveIsOpen;
 
         public MediumTypeService(IOpticalDiscService opticalDiscService)
         {
@@ -43,7 +43,7 @@ namespace PeKaRaSa.MusicControl.Services
                     else if (info.Contains("data disc type 1"))
                     {
                         // DataCD or DVD
-                        _opticalDiscService.Unmount();
+                        _opticalDiscService.UnMount();
                         _opticalDiscService.Mount();
                         bool isDvd = _opticalDiscService.FindFile("AUDIO_TS");
                         if (isDvd)
@@ -54,7 +54,7 @@ namespace PeKaRaSa.MusicControl.Services
                         bool isMultipleAlbumms = _opticalDiscService.FindFile("MultipleAlbums.md");
                         if (isMultipleAlbumms)
                         {
-                            return MediumType.MultipleAlbumms;
+                            return MediumType.MultipleAlbums;
                         }
                         return MediumType.Mp3;
                     }

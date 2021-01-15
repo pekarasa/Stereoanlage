@@ -5,7 +5,7 @@ using System.Threading;
 namespace PeKaRaSa.MusicControl.Services.Players
 {
     /// <summary>
-    /// Communicates via mpc with the music player deamon (mpd)
+    /// Communicates via mpc with the music player daemon (mpd)
     /// </summary>
     /// <remarks>
     /// Alternatively it would be possible to communicate directly with the mpd.

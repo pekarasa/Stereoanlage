@@ -27,13 +27,13 @@
         /// Switch to track <paramref name="position"/>
         /// </summary>
         /// <param name="position">Track 0 - 29</param>
-        void Track(string v);
+        void Track(string position);
 
         /// <summary>
         /// If it is a multi-disc system, switch to disc <paramref name="position"/>
         /// </summary>
         /// <param name="position">disc 1 - 9</param>
-        void Disc(string v);
+        void Disc(string position);
 
         /// <summary>
         /// Recording the current audio output
@@ -102,7 +102,7 @@
 
         /// <summary>
         /// Moves to the previous channel
-        /// </summary
+        /// </summary>
         void ChannelDown();
     }
 }

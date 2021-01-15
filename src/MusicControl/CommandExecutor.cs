@@ -25,7 +25,7 @@ namespace PeKaRaSa.MusicControl
         /// Executes the given command
         /// </summary>
         /// <param name="arguments"></param>
-        public void Command(IEnumerable<string> arguments)
+        public void Command(string[] arguments)
         {
             if (!arguments?.Any() ?? true)
             {
@@ -78,7 +78,7 @@ namespace PeKaRaSa.MusicControl
                             {
                                 _cdUnitTokenSource = null;
                             }
-                        }, token).ContinueWith((t) =>
+                        }, token).ContinueWith((_) =>
                         {
                             // _activeUnit must be unchanged
                             Log.WriteLine($"unchanged unit '{_activeUnit?.GetType().Name}'");
@@ -98,7 +98,7 @@ namespace PeKaRaSa.MusicControl
         /// Interprets the first argument as a command and executes it with the additional arguments
         /// </summary>
         /// <param name="arguments"></param>
-        private void SendCommandToActiveUnit(IEnumerable<string> arguments)
+        private void SendCommandToActiveUnit(string[] arguments)
         {
             string command = arguments.First();
 
@@ -107,34 +107,34 @@ namespace PeKaRaSa.MusicControl
             switch (command)
             {
                 case "poweroff":
-                    _activeUnit.PowerOff();
+                    _activeUnit?.PowerOff();
                     break;
                 case "track":
-                    _activeUnit.Track(arguments.Skip(1).First());
+                    _activeUnit?.Track(arguments.Skip(1).First());
                     break;
                 case "disc":
-                    _activeUnit.Disc(arguments.Skip(1).First());
+                    _activeUnit?.Disc(arguments.Skip(1).First());
                     break;
                 case "record":
-                    _activeUnit.Record();
+                    _activeUnit?.Record();
                     break;
                 case "eject":
-                    _activeUnit.Eject();
+                    _activeUnit?.Eject();
                     break;
                 case "rewind":
                     switch (arguments.Skip(1).First())
                     {
                         case "fastforward":
-                            _activeUnit.FastForward();
+                            _activeUnit?.FastForward();
                             break;
                         case "rewind":
-                            _activeUnit.Rewind();
+                            _activeUnit?.Rewind();
                             break;
                         case "next":
-                            _activeUnit.Next();
+                            _activeUnit?.Next();
                             break;
                         case "previous":
-                            _activeUnit.Previous();
+                            _activeUnit?.Previous();
                             break;
                         default:
                             Log.WriteLine("rewind {0} unknown", arguments.Skip(1).First());
@@ -146,13 +146,13 @@ namespace PeKaRaSa.MusicControl
                     switch (arguments.Skip(1).First())
                     {
                         case "play":
-                            _activeUnit.Play();
+                            _activeUnit?.Play();
                             break;
                         case "pause":
-                            _activeUnit.Pause();
+                            _activeUnit?.Pause();
                             break;
                         case "stop":
-                            _activeUnit.Stop();
+                            _activeUnit?.Stop();
                             break;
                         default:
                             Log.WriteLine("control {0} unknown", arguments.Skip(1).First());
@@ -164,13 +164,13 @@ namespace PeKaRaSa.MusicControl
                     switch (arguments.Skip(1).First())
                     {
                         case "up":
-                            _activeUnit.VolumeUp();
+                            _activeUnit?.VolumeUp();
                             break;
                         case "down":
-                            _activeUnit.VolumeDown();
+                            _activeUnit?.VolumeDown();
                             break;
                         case "mute":
-                            _activeUnit.VolumeMute();
+                            _activeUnit?.VolumeMute();
                             break;
                         default:
                             Log.WriteLine("volume {0} unknown", arguments.Skip(1).First());
@@ -182,10 +182,10 @@ namespace PeKaRaSa.MusicControl
                     switch (arguments.Skip(1).First())
                     {
                         case "up":
-                            _activeUnit.ChannelUp();
+                            _activeUnit?.ChannelUp();
                             break;
                         case "down":
-                            _activeUnit.ChannelDown();
+                            _activeUnit?.ChannelDown();
                             break;
                         default:
                             Log.WriteLine("channel {0} unknown", arguments.Skip(1).First());

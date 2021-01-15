@@ -2,7 +2,6 @@
 using PeKaRaSa.MusicControl.Services.Players;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
@@ -102,7 +101,7 @@ namespace PeKaRaSa.MusicControl.Units
         public override void Eject()
         {
             Kill();
-            // todo eject the fisc
+            // todo eject the disc
         }
 
         public override void Record()

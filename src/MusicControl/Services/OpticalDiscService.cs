@@ -6,12 +6,12 @@ namespace PeKaRaSa.MusicControl.Services
     public class OpticalDiscService : IOpticalDiscService
     {
         private readonly string _opticalDevice;
-        private readonly string _opticalMountpoint;
+        private readonly string _opticalMountPoint;
 
         public OpticalDiscService()
         {
             _opticalDevice = AppSettings.GetValueOrDefault("OpticalDevice", "/dev/sr0");
-            _opticalMountpoint = AppSettings.GetValueOrDefault("OpticalMountpoint", "/home/pi/mpd/music/mnt");
+            _opticalMountPoint = AppSettings.GetValueOrDefault("OpticalMountPoint", "/home/pi/mpd/music/mnt");
         }
 
         public bool FindFile(string v)
@@ -25,7 +25,7 @@ namespace PeKaRaSa.MusicControl.Services
 
             try
             {
-                using (Process process = new Process())
+                using (var process = new Process())
                 {
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.FileName = "setcd";
@@ -51,7 +51,7 @@ namespace PeKaRaSa.MusicControl.Services
         {
             try
             {
-                using (Process process = new Process())
+                using (var process = new Process())
                 {
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.FileName = "sudo";
@@ -66,15 +66,15 @@ namespace PeKaRaSa.MusicControl.Services
             }
         }
 
-        public void Unmount()
+        public void UnMount()
         {
             try
             {
-                using (Process process = new Process())
+                using (var process = new Process())
                 {
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.FileName = "sudo";
-                    process.StartInfo.Arguments = $"umount {_opticalDevice} {_opticalMountpoint}";
+                    process.StartInfo.Arguments = $"umount {_opticalDevice} {_opticalMountPoint}";
                     process.StartInfo.CreateNoWindow = true;
                     process.Start();
                 }
