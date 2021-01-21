@@ -55,6 +55,7 @@ namespace PeKaRaSa.MusicControl
 
                         _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, new CancellationTokenSource().Token);
                         Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
+                        _activeUnit?.Play();
                     }
                     // Is the cd activation already running and not cancelled?
                     else if (_cdUnitTokenSource != null && !_cdUnitTokenSource.IsCancellationRequested)
@@ -73,6 +74,7 @@ namespace PeKaRaSa.MusicControl
                             {
                                 _activeUnit = _factory.GetActiveUnit(cdUnit, _activeUnit, token);
                                 Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
+                                _activeUnit?.Play();
                             }
                             finally
                             {
