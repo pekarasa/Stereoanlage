@@ -19,6 +19,15 @@ namespace PeKaRaSa.MusicControl.Units
             Mpc = mpc;
             _playlistService = playlistService;
         }
+        public override void Next()
+        {
+            Mpc.Send("next");
+        }
+
+        public override void Previous()
+        {
+            Mpc.Send("prev");
+        }
 
         public override void Kill()
         {
@@ -64,12 +73,15 @@ namespace PeKaRaSa.MusicControl.Units
 
             string playlist = _playlistService.GetPlayListName(index);
 
-            if (playlist != null)
+            if (playlist == null)
             {
-                Mpc.Send("clear");
-                Mpc.Send($"load \"{playlist}\"");
-                Mpc.Send("play");
+                return;
             }
+
+            Mpc.Send("clear");
+            Mpc.Send($"load \"{playlist}\"");
+            Mpc.Send(index == 10 ? "random on" : "random off");
+            Mpc.Send("play");
         }
     }
 }
