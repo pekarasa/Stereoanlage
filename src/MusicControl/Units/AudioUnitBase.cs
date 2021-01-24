@@ -8,7 +8,7 @@ namespace PeKaRaSa.MusicControl.Units
         protected int VolumeIncrement { get; set; }
         protected int VolumeMaximum { get; set; }
         protected int VolumeMinimum { get; set; }
-        protected bool IsMuted { get; set; } = false;
+        protected bool IsMuted { get; set; }
         protected IMusicPlayerClient Mpc { get; set; }
 
         public abstract void Kill();

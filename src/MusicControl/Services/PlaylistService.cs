@@ -22,7 +22,6 @@ namespace PeKaRaSa.MusicControl.Services
         public string GetPlayListName(int index)
         {
             string[] sortedPlaylistNames = _directoryInfo.GetFiles().OrderBy(f => f).ToArray();
-            string fileName = null;
 
             if (index < 1)
             {
@@ -34,7 +33,7 @@ namespace PeKaRaSa.MusicControl.Services
                 return null;
             }
 
-            fileName = sortedPlaylistNames[index - 1];
+            string fileName = sortedPlaylistNames[index - 1];
 
             return Path.GetFileNameWithoutExtension(fileName);
         }

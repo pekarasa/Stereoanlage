@@ -8,7 +8,7 @@ using System.Threading;
 namespace PeKaRaSa.MusicControl.Units
 {
     /// <summary>
-    /// Abracts the Audio CD unit to listen to audio CDs
+    /// Abstracts the Audio CD unit to listen to audio CDs
     /// </summary>
     public class AudioCdUnit : AudioUnitBase
     {
@@ -106,6 +106,7 @@ namespace PeKaRaSa.MusicControl.Units
 
         public override void Record()
         {
+            // todo record from audio cd
             //echo "ripit AudioCD" >> $musicCenterLog
             //sudo ripit--nointeraction - W--coder = 2 - e--overwrite e -o / home / pi / mpd / music /
         }
