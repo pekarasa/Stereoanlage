@@ -4,9 +4,6 @@ DokuIntern
 # Persönliche Musk
 mpd/music/*
 
-#publishing folder
-srv
-
 # User-specific files
 *.suo
 *.user
