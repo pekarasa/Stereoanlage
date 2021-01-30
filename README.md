@@ -100,12 +100,12 @@ cd rpi-audio-receiver-main
 
 Answer all installation questions with Yes except the following:
 
-1. Hostname: **MusixOne**
-1. Pretty hostname: **MusixOne**
+1. Hostname: **MusicTwo**
+1. Pretty hostname: **MusicTwo**
 1. Do you want to install Startup sound? **N**
 1. Do you want to install ALSA VU meter plugin (pivumeter) **N**
 
-Restart the system (`sudo reboot`) and try to detect the bluetooth device named MusixOne.
+Restart the system (`sudo reboot`) and try to detect the bluetooth device named MusicTwo.
 
 ## Set Localization
 
@@ -116,8 +116,6 @@ Restart the system (`sudo reboot`) and try to detect the bluetooth device named 
     - Advanced Options
       - Expand Filesystem
 1. Reboot with `sudo reboot`
-
-Bevor wir die erstellte SD-Karte in den Raspberry Pi einsetzen und booten, müssen wir noch folgenes tun:
 
 ## Development computer
 
@@ -131,7 +129,10 @@ The public key is then placed on the Rapsbbery Pi.
 
 Copy the public key to the Raspberry Pi.
 
-`cat .ssh/id_rsa.pub | ssh pi@MusicTwo 'cat >> .ssh/authorized_keys'`
+```bash
+ssh pi@MusicTwo 'mkdir .ssh'
+cat .ssh/id_rsa.pub | ssh pi@MusicTwo 'cat >> .ssh/authorized_keys'
+```
 
 ## Setting up LIRC on the Raspberry Pi
 
@@ -181,7 +182,7 @@ sudo reboot
 1. Press any keys on the IR control. Various lines appear on the screen.
 
 1. `sudo systemctl start lircd.service`
-1. `irw` -> TODO: Hier muss zuerst die neue Config der IR kopiert werden
+1. `irw` -> But you have to deploythe configurations first. See below.
 1. Press any keys on the IR control. The commands appear on the screen.
 
 ### Optional: Record codes of the remote control yourself with
@@ -222,7 +223,7 @@ aplay -l
 ## Install and use Microsoft Dot NET 5
 
 We determine for which architecture we have to install .NET with `dpkg --print-architecture`.
-The output is `arm64`.
+The output is `armhf`.
 
 As .NET Core is installed manually, we have to make sure that these libraries are installed: `sudo apt install libc6 libgcc1 libgssapi-krb5-2 libicu63 libssl1.1 libstdc++6 zlib1g`
 
@@ -247,8 +248,9 @@ export PATH=$PATH:/opt/dotnet
 
 Restart with `sudo reboot`
 
-Kompilieren mit:
-`dotnet publish MusicControl -c Release -o ../srv/MusicControl -r linux-arm64 -p:PublishSingleFile=false --self-contained true`
+If yoe need to compile, you can do it with: mit:
+`dotnet publish MusicControl -c Release -o ../srv/MusicControl -r linux-arm32 -p:PublishSingleFile=false --self-contained true`
+But you have to deploy first. See below.
 
 ## Synchronize and deploy the software
 
@@ -261,7 +263,11 @@ ssh pi@MusicTwo './deployAll.sh'
 ssh pi@MusicTwo
 ```
 
-Use systemctl command to start the service on boot: `sudo systemctl enable --now irexec`
+Use systemctl command to start the services on boot: 
+```bash
+sudo systemctl enable --now irexec
+sudo systemctl enable --now MusicControl.service
+```
 
 ## Installing Music Player Daemon, setcd and VideoLAN
 
