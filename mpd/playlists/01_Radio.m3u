@@ -1,0 +1,61 @@
+#EXTM3U
+# 1
+#EXTINF:-1, Radio SRF 1
+http://stream.srg-ssr.ch/m/drs1/mp3_128
+
+# 2
+#EXTINF:-1, Radio SRF 2 Kultur
+http://stream.srg-ssr.ch/m/drs2/mp3_128
+
+# 3
+#EXTINF:-1, Radio SRF 3
+http://stream.srg-ssr.ch/m/drs3/mp3_128
+
+# 4
+#EXTINF:-1, Radio SRF 4 News
+http://stream.srg-ssr.ch/m/drs4news/mp3_128
+
+# 5
+#EXTINF:-1, Radio SWR2 Kultur neu entdecken
+http://swr-swr2-live.cast.addradio.de/swr/swr2/live/mp3/256/stream.mp3
+
+# 6
+#EXTINF:-1, Radio Deutschlandfunk
+https://dradio-edge-209a-fra-lg-cdn.cast.addradio.de/dradio/dlf/live/opus/high/stream.opus
+#http://st01.dlf.de/dlf/01/104/ogg/stream.ogg
+
+# 7
+#EXTINF:-1, Radio Deutschlandfunk Kultur
+http://st02.dlf.de/dlf/02/128/mp3/stream.mp3
+
+# 8
+#EXTINF:-1, Radio ORF Ö1
+https://orf-live.ors-shoutcast.at/oe1-q2a
+
+# 9
+#EXTINF:-1, Radio Bayern 2
+https://br-edge-3009-dus-ts-cdn.cast.addradio.de/br/br2/nord/mp3/mid?_art=dj0yJmlwPTkxLjEzMi4xNDUuMTE0JmlkPWljc2N4bC1ub3FmYW1ub2ImdD0xNjExNTc0MTc0JnM9Nzg2NmYyOWMjNTM1MDM0MzZjNTllZTkwNDAxZmEzNDY2ZjYzYTIzYTA
+
+# 10
+#EXTINF:-1, Musik 80s Forever - We Keep The 80s Alive
+https://premium.shoutcastsolutions.com/radio/8050/256.mp3
+
+# 11
+#EXTINF:-1, Musik Energy 80s
+http://energy80s.ice.infomaniak.ch/energy80s-high.mp3
+
+# 12
+#EXTINF:-1, Musik Energy 90s
+http://energy90s.ice.infomaniak.ch/energy90s-high.mp3
+
+# 13
+#EXTINF:-1, Musik Radio 24 - Greatest Hits
+http://icecast.radio24.ch/24sn-mp3-srp
+
+# 14
+#EXTINF:-1, Musik Energy One Hit Wonder
+https://energyonehitwonder.ice.infomaniak.ch/energyonehitwonder-high.mp3
+
+# 15
+#EXTINF:-1,- 0 N - Energy Mundart
+https://energymundart.ice.infomaniak.ch/energymundart-high.mp3

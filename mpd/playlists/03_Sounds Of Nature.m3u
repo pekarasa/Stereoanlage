@@ -22,3 +22,6 @@ http://mp3.polskieradio.pl:8128/
 #RADIOBROWSERUUID:9febcbf6-990d-4c98-9645-58707b092945
 #EXTINF:1,Radio Dreamland
 https://dreamsiteradiocp3.com/proxy/dreamland?mp=/stream
+
+#EXTINF:-1,- Ambi Nature Radio
+http://94.23.252.14:8067/;/;.m3u
