@@ -12,14 +12,7 @@ namespace PeKaRaSa.MusicControl.Units
     /// </summary>
     public class AudioCdUnit : AudioUnitBase
     {
-        public AudioCdUnit(IMusicPlayerClient mpc)
-        {
-            VolumeDefault = 150;
-            VolumeIncrement = 15;
-            VolumeMaximum = 300;
-            VolumeMinimum = 0;
-            Mpc = mpc;
-        }
+        public AudioCdUnit(IMusicPlayerClient mpc) : base(mpc, 150, 15, 0, 300) { }
 
         public override void FastForward()
         {
@@ -56,7 +49,7 @@ namespace PeKaRaSa.MusicControl.Units
             Log.WriteLine($"StartProcess(\"cvlc\", $\"-I oldrc --rc-host localhost:{port} cdda://");
             //StartProcess("cvlc", $"-I oldrc --rc-host localhost:{port} cdda://");
             Thread.Sleep(2000);
-            Mpc.Send($"volume {VolumeDefault}");
+            Mpc.Send($"volume {Volume}");
         }
 
         private void StartProcess(string fileName, string arguments)

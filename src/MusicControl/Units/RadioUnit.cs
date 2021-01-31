@@ -10,15 +10,11 @@ namespace PeKaRaSa.MusicControl.Units
     {
         private readonly IPlaylistService _playlistService;
 
-        public RadioUnit(IMusicPlayerClient mpc, IPlaylistService playlistService)
+        public RadioUnit(IMusicPlayerClient mpc, IPlaylistService playlistService) : base(mpc, 9, 3, 0, 100)
         {
-            VolumeDefault = 9;
-            VolumeIncrement = 3;
-            VolumeMaximum = 100;
-            VolumeMinimum = 0;
-            Mpc = mpc;
             _playlistService = playlistService;
         }
+
         public override void Next()
         {
             Mpc.Send("next");
@@ -36,7 +32,7 @@ namespace PeKaRaSa.MusicControl.Units
 
         public override void Start()
         {
-            Mpc.Send($"volume {VolumeDefault}");
+            Mpc.Send($"volume {Volume}");
             Play();
         }
 
@@ -53,7 +49,7 @@ namespace PeKaRaSa.MusicControl.Units
         public override void PowerOff()
         {
             Mpc.Send("stop");
-            Mpc.Send($"volume {VolumeDefault}");
+            Mpc.Send($"volume {Volume}");
         }
 
         public override void Record() { }
@@ -71,6 +67,17 @@ namespace PeKaRaSa.MusicControl.Units
                 return;
             }
 
+            Mpc.Send($"play {index}");
+        }
+
+        public override void Disc(string position)
+        {
+            if (!int.TryParse(position, out int index))
+            {
+                Log.WriteLine("disc number '{0}' is not a valid integer", position);
+                return;
+            }
+
             string playlist = _playlistService.GetPlayListName(index);
 
             if (playlist == null)
@@ -80,7 +87,7 @@ namespace PeKaRaSa.MusicControl.Units
 
             Mpc.Send("clear");
             Mpc.Send($"load \"{playlist}\"");
-            Mpc.Send(index == 10 ? "random on" : "random off");
+            Mpc.Send(index == 2 ? "random on" : "random off");
             Mpc.Send("play");
         }
     }

@@ -4,12 +4,23 @@ namespace PeKaRaSa.MusicControl.Units
 {
     public abstract class AudioUnitBase : IAudioUnit
     {
-        protected int VolumeDefault { get; set; }
-        protected int VolumeIncrement { get; set; }
-        protected int VolumeMaximum { get; set; }
-        protected int VolumeMinimum { get; set; }
-        protected bool IsMuted { get; set; }
+        protected int Volume { get; set; }
+        private readonly int _volumeInitial;
+        private readonly int _volumeIncrement;
+        private readonly int _volumeMaximum;
+        private readonly int _volumeMinimum;
+        private bool _isMuted;
         protected IMusicPlayerClient Mpc { get; set; }
+
+        protected AudioUnitBase(IMusicPlayerClient mpc, int volumeInitial, int volumeIncrement, int volumeMinimum, int volumeMaximum)
+        {
+            Mpc = mpc;
+            _volumeInitial = volumeInitial;
+            Volume = _volumeInitial;
+            _volumeIncrement = volumeIncrement;
+            _volumeMinimum = volumeMinimum;
+            _volumeMaximum = volumeMaximum;
+        }
 
         public abstract void Kill();
         
@@ -34,10 +45,10 @@ namespace PeKaRaSa.MusicControl.Units
         /// </summary>
         public virtual void VolumeUp()
         {
-            VolumeDefault += VolumeIncrement;
-            VolumeDefault = VolumeDefault > VolumeMaximum ? VolumeMaximum : VolumeDefault;
+            Volume += _volumeIncrement;
+            Volume = Volume > _volumeMaximum ? _volumeMaximum : Volume;
 
-            Mpc.Send($"volume {VolumeDefault}");
+            Mpc.Send($"volume {Volume}");
         }
 
         /// <summary>
@@ -45,10 +56,10 @@ namespace PeKaRaSa.MusicControl.Units
         /// </summary>
         public virtual void VolumeDown()
         {
-            VolumeDefault -= VolumeIncrement;
-            VolumeDefault = VolumeDefault < VolumeMinimum ? VolumeMinimum : VolumeDefault;
+            Volume -= _volumeIncrement;
+            Volume = Volume < _volumeMinimum ? _volumeMinimum : Volume;
 
-            Mpc.Send($"volume {VolumeDefault}");
+            Mpc.Send($"volume {Volume}");
         }
 
         /// <summary>
@@ -56,8 +67,11 @@ namespace PeKaRaSa.MusicControl.Units
         /// </summary>
         public virtual void VolumeMute()
         {
-            Mpc.Send($"volume {(IsMuted ? VolumeDefault : 0)}");
-            IsMuted = !IsMuted;
+            // After muting, we start again with the initial volume
+            Volume = _volumeInitial;
+
+            Mpc.Send($"volume {(_isMuted ? Volume : 0)}");
+            _isMuted = !_isMuted;
         }
 
         /// <summary>
