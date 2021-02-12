@@ -19,6 +19,12 @@ namespace PeKaRaSa.MusicControl
             _factory = factory;
             _cdUnitTokenSource = null;
             _activeUnit = _factory.GetDefaultUnit();
+
+            // Start playing my desired station
+            _activeUnit.Disc("1");
+            _activeUnit.Track("4");
+            _activeUnit.VolumeUp();
+            _activeUnit.Play();
         }
 
         /// <summary>
