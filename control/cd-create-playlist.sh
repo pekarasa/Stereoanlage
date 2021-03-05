@@ -24,9 +24,9 @@ createAudioCdPlaylist()
 
     /bin/echo "setting speed to x12 for playing"
     /usr/bin/eject -x 12
-    echo ${MPC} play
-    echo $playlist
-    cat $playlist
+
+    #echo $playlist
+    #cat $playlist
 }
 
 createDataCdPlaylist ()
@@ -40,38 +40,12 @@ createDataCdPlaylist ()
 
 noDiscFound ()
 {
-    echo no disc found
+    echo /home/pi/mpd/music/KeineCdEingelegt.ogg > $playlist
 }
 
 canNotPlayDVD ()
 {
-    echo "can't play dvd"
-}
-
-do_mount() {
-    NUM_TRACK=$(/sbin/udevadm info --query=property ${DEV} | /bin/grep ID_CDROM_MEDIA_TRACK_COUNT_AUDIO | /usr/bin/awk -F= '{ print $2 }')
-    /bin/echo "cd with ${NUM_TRACK} tracks detected"
- 
-    /bin/echo "setting speed to max" 
-    MAX_SPEED=$(/usr/bin/eject -X)
-    /usr/bin/eject -x ${MAX_SPEED}
-    
-    /bin/echo "clearing mpd queue"
-
-    sudo chmod 644 ${DEV}
-    ${MPC} clear
- 
-    for i in $(/usr/bin/seq 1 ${NUM_TRACK}); do
-        ${MPC} add cdda:///${i}
-    done
-
-    /bin/echo "setting speed to x12 for playing"
-    /usr/bin/eject -x 12
-    ${MPC} play
-}
-
-do_unmount() {
-    ${MPC} -f "%position% %file%" playlist | /bin/grep cdda:// | /usr/bin/awk '{ print $1 }' | ${MPC} del
+    echo /home/pi/mpd/music/DvdsKoennenNichAbgespieltWerden.ogg > $playlist
 }
 
 while true; do
