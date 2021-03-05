@@ -9,20 +9,7 @@ The aim of this guide is to help you set up the software for your music center a
 The Music Player Deamon (mpd) plays all kinds of streams. For example, the radio
 stations from the Internet, but also the mp3 tracks from data CDs.
 
-With audio CDs, however, things are different. An audio CD is not a data CD and
-does not actually contain files but only a stream. Similar to an LP, which can
-be played.
-
-Unfortunately, the mpd does not support audio CDs properly. This means that it
-plays audio CDs only with interruptions. This is actually not due to the mpd but
-to the poor quality of the CD drives.
-
-At the moment, the audio CD is played with vlc. I am not satisfied with this
-solution because vlc has dependencies on X11 and because I cannot manage to
-start vlc from C# service.
-
-Therefore, I decided to rip the audio CDs and save them as flac files on the SD
-card. They are then loaded as a playlist and played with mpd. The ripped files are retained, and if the same audio CD is to be played again, the already ripped data is used.
+On Raspbian there is currently a problem with udev to detect manually inserted or ejected media. I do not know why or what. So I decided to use crontab to poll regularly for an inserted disc.
 
 ## Playable media
 
@@ -64,6 +51,7 @@ In this project I have collected the knowledge from different sources. Namely th
 - [20] [Permanently Setting System-Wide PATH for all Users](https://stackabuse.com/how-to-permanently-set-path-in-linux/)
 - [21] [,Net Core Manual install](https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#manual-install)
 - [22] [Download .NET 5.](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [23] [My ultimate guide to the Raspberry pi audio server I wanted — Audio CD](https://mathieu-requillart.medium.com/my-ultimate-guide-to-the-raspberry-pi-audio-server-i-wanted-audio-cd-f985e8bd832c)
 
 ## Setup of the infrared remote control VLR-RC001
 
@@ -268,6 +256,12 @@ Use systemctl command to start the services on boot:
 sudo systemctl enable --now irexec
 sudo systemctl enable --now MusicControl.service
 ```
+
+`sudo crontab -e`
+
+Add this line at the end
+	
+*/1 * * * * /home/pi/control/cd-create-playlist.sh
 
 ## Installing Music Player Daemon, setcd and VideoLAN
 
