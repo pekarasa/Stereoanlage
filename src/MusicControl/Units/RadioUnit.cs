@@ -87,7 +87,7 @@ namespace PeKaRaSa.MusicControl.Units
 
             Mpc.Send("clear");
             Mpc.Send($"load \"{playlist}\"");
-            Mpc.Send(index == 2 ? "random on" : "random off");
+            Mpc.Send(index == 4 ? "random on" : "random off");
             Mpc.Send("play");
         }
     }
