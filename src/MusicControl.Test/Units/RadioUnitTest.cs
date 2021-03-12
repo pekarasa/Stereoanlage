@@ -41,9 +41,7 @@ namespace PeKaRaSa.MusicControl.Test.Units
             _sut.Track("3");
 
             // arrange
-            _mpc.Verify(m => m.Send("clear"));
-            _mpc.Verify(m => m.Send($"load \"{expectedTrackName}\""));
-            _mpc.Verify(m => m.Send("play"));
+            _mpc.Verify(m => m.Send("play 3"));
         }
 
         [Test]
