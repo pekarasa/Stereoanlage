@@ -18,15 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DummyConsoleApplication\SetcdDummy.csproj" />
     <ProjectReference Include="..\MusicControl\MusicControl.csproj" />
-    <ProjectReference Include="..\VlcDummy\VlcDummy.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="setcd.dummy">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

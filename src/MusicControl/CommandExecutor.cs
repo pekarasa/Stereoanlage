@@ -1,24 +1,19 @@
 ﻿using PeKaRaSa.MusicControl.Services;
 using PeKaRaSa.MusicControl.Units;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using PeKaRaSa.MusicControl.Services.Players;
 
 namespace PeKaRaSa.MusicControl
 {
     public class CommandExecutor
     {
-        private readonly IAudioUnitFactory _factory;
-        private IAudioUnit _activeUnit;
-        private CancellationTokenSource _cdUnitTokenSource;
+        private readonly IAudioUnit _activeUnit;
 
-        public CommandExecutor(IAudioUnitFactory factory)
+        public CommandExecutor(IAudioUnit activeUnit)
         {
-            _factory = factory;
-            _cdUnitTokenSource = null;
-            _activeUnit = _factory.GetDefaultUnit();
+            _activeUnit = new RadioUnit(new MusicPlayerClient(), new PlaylistService(new FileAccess(AppSettings.GetValueOrDefault("PathToPlaylists", "/home/pi/mpd/playlists"))));
+            _activeUnit = activeUnit;
 
             // Start playing my desired station
             _activeUnit.Disc("1");
@@ -36,65 +31,6 @@ namespace PeKaRaSa.MusicControl
             if (!arguments?.Any() ?? true)
             {
                 Log.WriteLine("No command can be executed without arguments.");
-                return;
-            }
-
-            string command = arguments.First();
-
-            // Check whether a new component should be activated
-            if ("changeUnit".Equals(command, StringComparison.CurrentCultureIgnoreCase))
-            {
-                Log.WriteLine($"current unit '{_activeUnit?.GetType().Name}'");
-                string unitToActivate = arguments.Last();
-                Log.WriteLine($"changeUnit called for {unitToActivate}");
-
-                lock (_factory)
-                {
-                    // Should a unit other than the CD unit be activated?
-                    if (unitToActivate != "cd")
-                    {
-                        if (_cdUnitTokenSource != null)
-                        {
-                            _cdUnitTokenSource.Cancel();
-                            _cdUnitTokenSource = null;
-                        }
-
-                        _activeUnit = _factory.GetActiveUnit(unitToActivate, _activeUnit, new CancellationTokenSource().Token);
-                        Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
-                        _activeUnit?.Play();
-                    }
-                    // Is the cd activation already running and not cancelled?
-                    else if (_cdUnitTokenSource != null && !_cdUnitTokenSource.IsCancellationRequested)
-                    {
-                        Log.WriteLine("CD Unit activation already running");
-                    }
-                    else 
-                    {
-                        _cdUnitTokenSource = new CancellationTokenSource();
-                        CancellationToken token = _cdUnitTokenSource.Token;
-                        string cdUnit = unitToActivate;
-
-                        Task.Factory.StartNew(() =>
-                        {
-                            try
-                            {
-                                _activeUnit = _factory.GetActiveUnit(cdUnit, _activeUnit, token);
-                                Log.WriteLine($"new unit '{_activeUnit?.GetType().Name}'");
-                                _activeUnit?.Play();
-                            }
-                            finally
-                            {
-                                _cdUnitTokenSource = null;
-                            }
-                        }, token).ContinueWith((_) =>
-                        {
-                            // _activeUnit must be unchanged
-                            Log.WriteLine($"unchanged unit '{_activeUnit?.GetType().Name}'");
-                            _cdUnitTokenSource = null;
-                        }, TaskContinuationOptions.OnlyOnCanceled);
-                    }
-                }
-
                 return;
             }
 

@@ -1,27 +1,20 @@
-﻿using FluentAssertions;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using PeKaRaSa.MusicControl.Units;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace PeKaRaSa.MusicControl.Test
 {
     public class CommandExecutorTest
     {
         private CommandExecutor _sut;
-        private Mock<IAudioUnitFactory> _factoryMock;
         private Mock<IAudioUnit> _audioUnitMock;
 
         [SetUp]
         public void Setup()
         {
-            _factoryMock = new Mock<IAudioUnitFactory>();
             _audioUnitMock = new Mock<IAudioUnit>();
-            _factoryMock.Setup(m => m.GetDefaultUnit()).Returns(_audioUnitMock.Object);
-
-            _sut = new CommandExecutor(_factoryMock.Object);
+            _sut = new CommandExecutor(_audioUnitMock.Object);
         }
 
         [Test]
@@ -43,9 +36,7 @@ namespace PeKaRaSa.MusicControl.Test
             _sut.Command(null);
 
             // assert
-            _factoryMock.Verify(m => m.GetDefaultUnit(), Times.Once);
-            _factoryMock.Verify(m => m.GetActiveUnit(It.IsAny<string>(), null, It.IsAny<CancellationToken>()),
-                Times.Never);
+            _audioUnitMock.VerifyAll();
         }
 
         [Test]
@@ -55,16 +46,13 @@ namespace PeKaRaSa.MusicControl.Test
             _sut.Command(Array.Empty<string>());
 
             // assert
-            _factoryMock.Verify(m => m.GetDefaultUnit(), Times.Once);
-            _factoryMock.Verify(m => m.GetActiveUnit(It.IsAny<string>(), null, It.IsAny<CancellationToken>()),
-                Times.Never);
+            _audioUnitMock.VerifyAll();
         }
 
         [Test]
         public void Command_WhenCommandIsGiven_ThenThisCommandIsCalled()
         {
             // arrange
-            _factoryMock.Setup(m => m.GetDefaultUnit()).Returns(_audioUnitMock.Object);
             string[] arguments = "volume up".Split(' ');
 
             // act

@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Sockets;
 using PeKaRaSa.MusicControl.Services;
+using PeKaRaSa.MusicControl.Services.Players;
+using PeKaRaSa.MusicControl.Units;
 
 namespace PeKaRaSa.MusicControl
 {
@@ -13,12 +15,9 @@ namespace PeKaRaSa.MusicControl
         public static void Main()
         {
             TcpListener server = null;
+            var activeUnit = new RadioUnit(new MusicPlayerClient(), new PlaylistService(new FileAccess(AppSettings.GetValueOrDefault("PathToPlaylists", "/home/pi/mpd/playlists"))));
 
-            IOpticalDiscService opticalDiscService = new OpticalDiscService();
-            IMediumTypeService mediumTypeService = new MediumTypeService(opticalDiscService);
-            IAudioUnitFactory factory = new AudioUnitFactory(mediumTypeService);
-
-            CommandExecutor commandExecutor = new CommandExecutor(factory);
+            CommandExecutor commandExecutor = new CommandExecutor(activeUnit);
 
             try
             {
