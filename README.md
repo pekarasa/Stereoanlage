@@ -23,7 +23,7 @@ Currently the music center can play the following media:
 
 ## Software in use
 
-To play the above listed media I use MPD, vlc and Raspberry Pi Audio Receiver
+To play the above listed media I use MPD and Raspberry Pi Audio Receiver
 
 ## Resources
 
@@ -71,7 +71,7 @@ As audio card and amplifier I use the hifiberry AMP2. See [[14]](https://www.hif
 ## Install Raspberry Pi OS using Raspberry Pi Imager
 
 1. Download and install rpi-imager from [Raspberry Pi](https://www.raspberrypi.org/software/)-site.
-1. Bring the image to the sd card
+1. Bring the image RASPBERRY PI OS LITE to the sd card
 1. Enable SSH to make ssh work after booting: `touch '/run/media/pp/rootfs/boot/ssh'`
 1. Boot and connect with `ssh pi@raspberrypi`. The default passowrd is `raspberry`.
 
@@ -92,6 +92,8 @@ Answer all installation questions with Yes except the following:
 1. Pretty hostname: **MusicTwo**
 1. Do you want to install Startup sound? **N**
 1. Do you want to install ALSA VU meter plugin (pivumeter) **N**
+1. Which board do you want to enable? **dacplus**
+1. Do you want to enable read-only mode? **N**
 
 Restart the system (`sudo reboot`) and try to detect the bluetooth device named MusicTwo.
 
@@ -266,7 +268,7 @@ Add this line at the end
 ## Installing Music Player Daemon, setcd and VideoLAN
 
 ```bash
-sudo apt-get install mpd mpc vlc setcd
+sudo apt-get install mpd mpc setcd
 ```
 
 ### Setup mpd
