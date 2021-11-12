@@ -17,12 +17,11 @@ http://stream.srg-ssr.ch/m/drs4news/mp3_128
 
 # 5
 #EXTINF:-1, Radio SWR2 Kultur neu entdecken
-http://swr-swr2-live.cast.addradio.de/swr/swr2/live/mp3/256/stream.mp3
+https://liveradio.swr.de/sw331ch/swr2/play.aac
 
 # 6
 #EXTINF:-1, Radio Deutschlandfunk
-https://dradio-edge-209a-fra-lg-cdn.cast.addradio.de/dradio/dlf/live/opus/high/stream.opus
-#http://st01.dlf.de/dlf/01/104/ogg/stream.ogg
+http://st01.dlf.de/dlf/01/128/mp3/stream.mp3
 
 # 7
 #EXTINF:-1, Radio Deutschlandfunk Kultur
